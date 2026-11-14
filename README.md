@@ -11,16 +11,21 @@ Serie de explainers animados en HTML5 autocontenidos (formato vertical `9:16` pa
 
 ## Videos y Archivos Principales
 
-| Científico | Explainer Interactivo (HTML) | Video MP4 (Con Subtítulos) | Video MP4 (Sin Subtítulos) | Estado de Audio |
-| :--- | :--- | :--- | :--- | :--- |
-| **Andrés Plazas Malagón** | [`plazas-explainer.html`](plazas-explainer.html) | [`out/plazas-explainer.mp4`](out/plazas-explainer.mp4) | [`out/plazas-explainer-sin-subtitulos.mp4`](out/plazas-explainer-sin-subtitulos.mp4) | Sincronizado (`Narracion/Plazas/plazas-master-mix.mp3`, voz + *Cipher* −15 dB + SFX). Incluye versión [`out/plazas-explainer-solo-voz.mp4`](out/plazas-explainer-solo-voz.mp4). |
-| **Diego Restrepo** | [`restrepo-explainer.html`](restrepo-explainer.html) | [`out/restrepo-explainer.mp4`](out/restrepo-explainer.mp4) | [`out/restrepo-explainer-sin-subtitulos.mp4`](out/restrepo-explainer-sin-subtitulos.mp4) | Tiempos estimados (listo para grabar con teleprompter o sincronizar locución). |
-| **Juan Carlos Sanabria** | [`sanabria-explainer.html`](sanabria-explainer.html) | [`out/sanabria-explainer.mp4`](out/sanabria-explainer.mp4) | [`out/sanabria-explainer-sin-subtitulos.mp4`](out/sanabria-explainer-sin-subtitulos.mp4) | Tiempos estimados (listo para grabar con teleprompter o sincronizar locución). |
-| **Leonardo Castañeda** | [`castaneda-explainer.html`](castaneda-explainer.html) | [`out/castaneda-explainer.mp4`](out/castaneda-explainer.mp4) | [`out/castaneda-explainer-sin-subtitulos.mp4`](out/castaneda-explainer-sin-subtitulos.mp4) | Tiempos estimados (listo para grabar con teleprompter o sincronizar locución). |
+| Científico | Explainer Interactivo (HTML) | Guion (Texto Plano) | Video MP4 (Con Subtítulos) | Video MP4 (Sin Subtítulos) | Estado de Audio |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **Andrés Plazas Malagón** | [`plazas-explainer.html`](plazas-explainer.html) | [`guion-plazas.txt`](guion-plazas.txt) | [`out/plazas-explainer.mp4`](out/plazas-explainer.mp4) | [`out/plazas-explainer-sin-subtitulos.mp4`](out/plazas-explainer-sin-subtitulos.mp4) | Sincronizado (`Narracion/Plazas/plazas-master-mix.mp3`, voz + *Cipher* −15 dB + SFX). Incluye versión [`out/plazas-explainer-solo-voz.mp4`](out/plazas-explainer-solo-voz.mp4). |
+| **Diego Restrepo** | [`restrepo-explainer.html`](restrepo-explainer.html) | [`guion-restrepo.txt`](guion-restrepo.txt) | [`out/restrepo-explainer.mp4`](out/restrepo-explainer.mp4) | [`out/restrepo-explainer-sin-subtitulos.mp4`](out/restrepo-explainer-sin-subtitulos.mp4) | Tiempos estimados (listo para grabar con teleprompter o sincronizar locución). |
+| **Juan Carlos Sanabria** | [`sanabria-explainer.html`](sanabria-explainer.html) | [`guion-sanabria.txt`](guion-sanabria.txt) | [`out/sanabria-explainer.mp4`](out/sanabria-explainer.mp4) | [`out/sanabria-explainer-sin-subtitulos.mp4`](out/sanabria-explainer-sin-subtitulos.mp4) | Tiempos estimados (listo para grabar con teleprompter o sincronizar locución). |
+| **Leonardo Castañeda** | [`castaneda-explainer.html`](castaneda-explainer.html) | [`guion-castaneda.txt`](guion-castaneda.txt) | [`out/castaneda-explainer.mp4`](out/castaneda-explainer.mp4) | [`out/castaneda-explainer-sin-subtitulos.mp4`](out/castaneda-explainer-sin-subtitulos.mp4) | Tiempos estimados (listo para grabar con teleprompter o sincronizar locución). |
 
-### Guion de Lectura en Texto Plano
+### Guiones de Lectura en Texto Plano
 
-El discurso completo de los 4 videos (organizado por bloques y con guía de pronunciación) está disponible listo para lectura en voz alta en [`GUION_NARRACION.txt`](GUION_NARRACION.txt).
+Cada video cuenta con su propio archivo `.txt` organizado por bloques y con guía de pronunciación para lectura directa en voz alta:
+
+- **Andrés Plazas Malagón:** [`guion-plazas.txt`](guion-plazas.txt)
+- **Diego Restrepo:** [`guion-restrepo.txt`](guion-restrepo.txt)
+- **Juan Carlos Sanabria:** [`guion-sanabria.txt`](guion-sanabria.txt)
+- **Leonardo Castañeda:** [`guion-castaneda.txt`](guion-castaneda.txt)
 
 ---
 
@@ -29,7 +34,10 @@ El discurso completo de los 4 videos (organizado por bloques y con guía de pron
 ```text
 .
 ├── README.md
-├── GUION_NARRACION.txt                 # Guion completo en texto plano para narración
+├── guion-plazas.txt                    # Guion en texto plano — Andrés Plazas Malagón
+├── guion-restrepo.txt                  # Guion en texto plano — Diego Restrepo
+├── guion-sanabria.txt                  # Guion en texto plano — Juan Carlos Sanabria
+├── guion-castaneda.txt                 # Guion en texto plano — Leonardo Castañeda
 ├── plazas-explainer.html               # Explainer interactivo de Andrés Plazas (con audio sincronizado)
 ├── restrepo-explainer.html             # Explainer interactivo de Diego Restrepo
 ├── sanabria-explainer.html             # Explainer interactivo de Juan Carlos Sanabria

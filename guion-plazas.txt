@@ -1,0 +1,34 @@
+ANDRÉS PLAZAS MALAGÓN
+Lentes gravitacionales y la cámara más grande de la historia
+(Audio sincronizado en Narracion/Plazas/ | Duración: 121 s)
+================================================================================
+
+[Bloque 01]
+La cámara digital más grande de la historia tiene tres mil doscientos megapíxeles, pesa tres toneladas y busca algo que no emite luz. Para encontrar la materia oscura, mide cómo su gravedad dobla apenas un uno por ciento el brillo de millones de galaxias lejanas.
+
+[Bloque 02]
+Detrás de esa calibración está el físico bogotano Andrés Plazas Malagón. Entró a la Universidad de los Andes para estudiar ingeniería industrial, pero en primer semestre una clase llamada Grandes Ideas de la Física le cambió la vida y decidió dedicarse a descifrar el cosmos.
+
+[Bloque 03]
+Tras su paso por Fermilab y su doctorado en Pensilvania, investigó en la NASA y en Princeton. Hoy es científico de operaciones del Observatorio Vera Rubin desde el laboratorio SLAC de la Universidad de Stanford.
+
+[Bloque 04]
+Su especialidad son las lentes gravitacionales débiles. Es como mirar los azulejos en el fondo de una piscina: aunque el agua sea transparente, sus ondas deforman el dibujo del piso y te revelan exactamente qué hay en medio.
+
+[Bloque 05]
+Pero medir una deformación del uno por ciento exige sensores perfectos. En cámaras como DECam, Plazas estudió una trampa del silicio llamada efecto más brillante, más gordo: cuando un píxel acumula mucha carga eléctrica, repele los nuevos electrones hacia los píxeles vecinos.
+
+[Bloque 06]
+Esa repulsión inflaba las estrellas brillantes e imitaba una señal falsa de materia oscura. Plazas diseñó los algoritmos para corregir esa distorsión píxel por píxel, un logro que le valió en Colombia el Premio Nacional de Ciencias Alejandro Ángel Escobar.
+
+[Bloque 07]
+Hoy, mientras prepara la gran cámara del Observatorio Vera Rubin y divulga la ciencia en su podcast Visión Cósmica, el trabajo de Andrés Plazas limpia la mirada humana para revelar el noventa y cinco por ciento invisible del universo.
+
+--------------------------------------------------------------------------------
+Guía de pronunciación:
+- Fermilab -> fermilab
+- Princeton -> prinston
+- Stanford -> estanford
+- SLAC -> eslac
+- DECam -> dicam
+- podcast -> podcas
