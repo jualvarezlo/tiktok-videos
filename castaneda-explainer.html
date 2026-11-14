@@ -1,0 +1,1299 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Leonardo Castañeda: reescribir la gravedad desde el OAN</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,300..800&family=JetBrains+Mono:wght@400;600&display=block">
+<style>
+/* Estilo visual: Noche (references/estilos.md) */
+:root{
+  --bg:#0A0E1F;
+  --panel:#11172E;
+  --panel-2:#182042;
+  --line:#27305A;
+  --glass:rgba(10,14,31,.82);
+  --ink:#F2F3FA;
+  --muted:#8F97BF;
+  --accent:#FFB454;
+  --accent-2:#6FB6FF;
+  --ok:#7EDDB3;
+  --warn:#FF7A6B;
+  --sub-ink:#FFFFFF;
+  --sub-edge:#0A0E1F;
+  --track:rgba(255,255,255,.22);
+  --display:"Bricolage Grotesque","Avenir Next Condensed","Arial Narrow",system-ui,sans-serif;
+  --body:"Atkinson Hyperlegible","Segoe UI",system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--bg)}
+body{color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+a{color:var(--accent-2);text-underline-offset:3px}
+
+/* Formatos: proporción y zona de subtítulos. El motor marca el formato en <body data-formato>. */
+body{--arw:9;--arh:16;--maxw:495px;--subs-top:65.5%;--subs-side:9%;--subs-size:7.6cqmin}
+body[data-formato="16:9"]{--arw:16;--arh:9;--maxw:1280px;--subs-top:79%;--subs-side:12%;--subs-size:5.6cqmin}
+body[data-formato="1:1"]{--arw:1;--arh:1;--maxw:760px;--subs-top:75%;--subs-side:8%;--subs-size:6.4cqmin}
+body[data-formato="4:5"]{--arw:4;--arh:5;--maxw:680px;--subs-top:72%;--subs-side:8%;--subs-size:6.8cqmin}
+
+.app{min-height:100%;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:32px 40px;padding:24px 16px}
+
+/* Cuadro */
+.frame{position:relative;container-type:size;flex:none;aspect-ratio:var(--arw)/var(--arh);width:min(100%,calc((100vh - 48px) * var(--arw) / var(--arh)),var(--maxw));
+  border:1px solid var(--line);border-radius:24px;overflow:hidden;background:var(--bg);
+  -webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.frame canvas{position:absolute;inset:0;width:100%;height:100%;display:block;z-index:1}
+
+.topbar{position:absolute;left:0;right:0;top:0;z-index:6;padding:2.6cqmin 4cqmin 0;display:flex;flex-direction:column;gap:2.6cqmin;pointer-events:none}
+.bars{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:1.2cqmin}
+.bars span{position:relative;display:block;height:3px;border-radius:2px;background:var(--track);overflow:hidden}
+.bars i{position:absolute;inset:0;transform-origin:left;transform:scaleX(var(--p,0));background:var(--ink)}
+.toprow{display:flex;justify-content:flex-end}
+.info{pointer-events:auto;width:9cqmin;height:9cqmin;border-radius:50%;border:1px solid var(--line);background:var(--glass);color:var(--ink);display:grid;place-items:center;cursor:pointer;padding:0;font:600 4cqmin/1 var(--mono)}
+@media (min-width:980px){.info{display:none}}
+
+/* Subtítulos */
+.subs{position:absolute;left:var(--subs-side);right:var(--subs-side);top:var(--subs-top);z-index:4;pointer-events:none;text-align:center;text-wrap:balance;
+  font-family:var(--display);font-weight:800;font-stretch:88%;font-size:var(--subs-size);line-height:1.1;letter-spacing:-.01em;color:var(--sub-ink);
+  text-shadow:0 0 .14em var(--sub-edge),.06em .06em 0 var(--sub-edge),-.06em .06em 0 var(--sub-edge),.06em -.06em 0 var(--sub-edge),-.06em -.06em 0 var(--sub-edge),0 .08em 0 var(--sub-edge),0 -.08em 0 var(--sub-edge),.08em 0 0 var(--sub-edge),-.08em 0 0 var(--sub-edge)}
+.subs .w{display:inline-block;margin-inline:.05em;transition:transform .12s ease,color .12s ease}
+.subs.karaoke .w.now{color:var(--accent);transform:scale(1.06)}
+.subs.pop{animation:pop .2s ease-out}
+.subs.full{font-size:calc(var(--subs-size) * .66)}
+@keyframes pop{from{transform:scale(.94);opacity:.4}to{transform:none;opacity:1}}
+
+/* Toques y estados */
+.taps{position:absolute;inset:0;z-index:5;cursor:pointer;touch-action:manipulation}
+.pz{position:absolute;left:50%;top:42%;z-index:5;width:17cqmin;height:17cqmin;transform:translate(-50%,-50%);border-radius:50%;background:var(--glass);border:1px solid var(--line);display:grid;place-items:center;pointer-events:none}
+.pz svg{width:7cqmin;height:7cqmin;fill:var(--ink);margin-left:1cqmin}
+.replay{position:absolute;left:50%;top:42%;z-index:7;transform:translate(-50%,-50%);display:inline-flex;align-items:center;gap:2cqmin;padding:3cqmin 5cqmin;border-radius:99px;border:0;background:var(--accent);color:var(--bg);font:700 4cqmin/1 var(--body);cursor:pointer}
+.frame.clean .topbar,.frame.clean .pz,.frame.clean .replay{display:none}
+.frame.bare .subs,.frame.bare .bars{visibility:hidden}
+.frame.frozen .subs,.frame.frozen .subs .w{animation:none!important;transition:none!important}
+.frame:focus-visible,.info:focus-visible,.replay:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+
+/* Panel */
+.aside{width:340px;max-height:min(calc(100vh - 48px),880px);overflow:auto;display:flex;flex-direction:column;gap:22px;padding-right:6px}
+.aside h1{margin:0;font-family:var(--display);font-weight:800;font-stretch:80%;font-size:30px;line-height:1;letter-spacing:-.01em;text-wrap:balance}
+.aside h2{margin:0 0 8px;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+.aside p{margin:0;color:var(--muted)}
+.aside ul{margin:0;padding-left:1.1em;color:var(--muted);display:flex;flex-direction:column;gap:5px}
+.actions{display:flex;flex-wrap:wrap;gap:8px}
+.act{appearance:none;border:1px solid var(--line);background:var(--panel-2);color:var(--ink);border-radius:99px;padding:9px 16px;font:700 14px/1 var(--body);cursor:pointer}
+.act.primary{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+.switch{appearance:none;display:inline-flex;align-items:center;gap:10px;align-self:flex-start;border:0;background:none;padding:2px 0;color:var(--ink);font:700 14px/1 var(--body);cursor:pointer}
+.switch .knob{position:relative;flex:none;width:38px;height:22px;border-radius:99px;background:var(--panel-2);border:1px solid var(--line);transition:background .15s ease}
+.switch .knob::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:var(--muted);transition:transform .15s ease,background .15s ease}
+.switch[aria-checked="true"] .knob{background:var(--accent);border-color:var(--accent)}
+.switch[aria-checked="true"] .knob::after{transform:translateX(16px);background:var(--bg)}
+.act:focus-visible,.blk:focus-visible,.close:focus-visible,.switch:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.script{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.blk{appearance:none;width:100%;text-align:left;display:grid;grid-template-columns:28px minmax(0,1fr);gap:8px;padding:9px 10px;border:1px solid transparent;border-radius:10px;background:none;color:var(--muted);font:400 14px/1.45 var(--body);cursor:pointer}
+.blk .n{font-family:var(--mono);font-size:12px;padding-top:2px;color:var(--muted)}
+.blk:hover{border-color:var(--line)}
+.blk[aria-current="step"]{background:var(--panel-2);border-color:var(--line);color:var(--ink)}
+.blk[aria-current="step"] .n{color:var(--accent)}
+.sheet-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.close{display:none;appearance:none;border:1px solid var(--line);background:var(--panel-2);color:var(--ink);border-radius:99px;padding:8px 14px;font:700 14px/1 var(--body);cursor:pointer}
+
+@media (min-width:980px){
+  body[data-formato="16:9"] .aside{display:block;width:min(100%,1280px);max-height:none;overflow:visible;columns:300px 3;column-gap:36px;padding-right:0}
+  body[data-formato="16:9"] .aside>*{break-inside:avoid;margin-bottom:22px}
+}
+@media (max-width:979px){
+  .aside{position:fixed;inset:0;z-index:20;width:auto;max-height:none;padding-inline:20px;padding-block:calc(env(safe-area-inset-top,0px) + 20px) calc(env(safe-area-inset-bottom,0px) + 28px);background:var(--bg);transform:translateY(102%);transition:transform .3s ease;visibility:hidden}
+  .aside.open{transform:none;visibility:visible}
+  .close{display:inline-block}
+}
+@media (max-width:699px){
+  .app{padding:0}
+  .frame{width:100%;border:0;border-radius:0}
+  body[data-formato="9:16"] .app{display:block;height:100%;min-height:0}
+  body[data-formato="9:16"] .frame{height:100%;aspect-ratio:auto}
+}
+body.render .app{display:block;height:100%;min-height:0;padding:0}
+body.render .frame{width:100vw;height:100vh;aspect-ratio:auto;border:0;border-radius:0}
+body.render .aside{display:none}
+@media (prefers-reduced-motion:reduce){
+  .subs.pop{animation:none}
+  .subs .w,.aside,.switch .knob,.switch .knob::after{transition:none}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="frame" id="frame" tabindex="0" aria-label="Explainer animado. Flechas: cambiar de escena. Espacio: pausa.">
+    <canvas id="cv" role="img" aria-label=""></canvas>
+    <div class="subs" id="subs" aria-live="off"></div>
+    <div class="taps" id="taps"></div>
+    <div class="pz" id="pz" hidden><svg viewBox="0 0 24 24"><path d="M7 4v16l13-8z"/></svg></div>
+    <button class="replay" id="replay" type="button" hidden>↻ Ver de nuevo</button>
+    <div class="topbar">
+      <div class="bars" id="bars"></div>
+      <div class="toprow">
+        <button class="info" id="info" type="button" aria-label="Abrir guion y opciones">i</button>
+      </div>
+    </div>
+  </div>
+  <!-- Voz grabada opcional: el motor la usa como reloj. Ver AUDIO_SRC en el script. -->
+  <audio id="voz" preload="auto"></audio>
+  <!-- Activos reales de recursos-externos precargados para el lienzo 2D -->
+  <div hidden aria-hidden="true">
+    <img id="img-castaneda" src="recursos-externos/02_assets/graficos/retrato_leonardo_castaneda_cutout.png" alt="">
+    <img id="img-etiqueta" src="recursos-externos/02_assets/graficos/etiqueta_frasco_materia_oscura.png" alt="">
+    <img id="img-sello-unal" src="recursos-externos/02_assets/graficos/sello_institucional_unal.png" alt="">
+    <img id="img-sello-mainz" src="recursos-externos/02_assets/graficos/sello_universidad_mainz.png" alt="">
+    <img id="img-einstein" src="recursos-externos/02_assets/referencias_reales/ref_einstein.jpg" alt="">
+    <img id="img-paper" src="recursos-externos/02_assets/graficos/paper_castaneda_termino_frontera.jpg" alt="">
+  </div>
+
+  <aside class="aside" id="aside" aria-label="Guion y opciones">
+    <div class="sheet-head">
+      <h1>Leonardo Castañeda: reescribir la gravedad desde el OAN</h1>
+      <button class="close" id="close" type="button">Cerrar</button>
+    </div>
+    <p>Explainer animado. Dura <span id="total">80</span> segundos.</p>
+    <div class="actions">
+      <button class="act" id="restart" type="button">Reiniciar</button>
+      <button class="act primary" id="rec" type="button">Modo grabación</button>
+    </div>
+    <p>Modo grabación oculta los controles y arranca de cero. Para salir, mantén presionada la pantalla o toca H.</p>
+    <button class="switch" id="bareSw" type="button" role="switch" aria-checked="true"><span class="knob" aria-hidden="true"></span>Subtítulos y barras</button>
+    <p>El interruptor muestra u oculta los subtítulos y las barras de arriba. Funciona también en modo grabación. Atajo: S.</p>
+    <div>
+      <h2>Guion</h2>
+      <ol class="script" id="script"></ol>
+    </div>
+    <div>
+      <h2>Cómo se usa</h2>
+      <p>Toca a la derecha para avanzar. Toca a la izquierda para volver. Toca al centro para pausar. Flechas, espacio, R para reiniciar.</p>
+    </div>
+    <div>
+      <h2>Qué es ilustración</h2>
+      <ul>
+        <li>La analogía de la tela elástica representa la transición entre una respuesta lineal de la curvatura ($f(R)=R$) y una no lineal a escalas cosmológicas; en realidad el espacio-tiempo tiene 4 dimensiones intrínsecas y no está inmerso en un espacio exterior.</li>
+        <li>La analogía de la auditoría del banco ilustra el teorema de la divergencia en el principio variacional de cuarta derivada sobre la hipersuperficie frontera $\partial\mathcal{M}$.</li>
+        <li>El tiempo de los subtítulos es una estimación de lectura en voz alta.</li>
+      </ul>
+    </div>
+    <div>
+      <h2>Fuentes</h2>
+      <ul>
+        <li><a href="https://ciencias.bogota.unal.edu.co/docente/leonardo-castaneda-colorado/" target="_blank" rel="noopener">Universidad Nacional de Colombia (OAN): Perfil del Dr. Leonardo Castañeda Colorado</a></li>
+        <li><a href="https://arxiv.org/abs/1002.0617" target="_blank" rel="noopener">A. Guarnizo, L. Castañeda, J. M. Tejeiro (2010): Boundary Term in Metric f(R) Gravity (Gen. Relativ. Gravit. 42, 2713)</a></li>
+        <li><a href="https://arxiv.org/abs/1010.5279" target="_blank" rel="noopener">A. Guarnizo, L. Castañeda, J. M. Tejeiro (2011): Geodesic Deviation Equation in f(R) Gravity</a></li>
+      </ul>
+    </div>
+  </aside>
+</div>
+
+<script>
+(() => {
+  // ================= 1. Configuración =================
+  const CONFIG = {
+    formato: '9:16',
+    subtitulos: 'karaoke',
+    cola: .6,
+    ritmo: 1
+  };
+
+  // ================= 2. Guion: un bloque por escena =================
+  const SCRIPT = [
+    'Nadie en la Tierra tiene un frasco con cien gramos de materia oscura. Sin embargo, al mirar cómo giran las galaxias a velocidades imposibles, sabemos que algo invisible las sostiene.',
+    'Él es Leonardo Castañeda: físico de la Universidad Nacional de Colombia, doctorado en Maguncia, Alemania, y director del grupo de cosmología en el histórico Observatorio Astronómico Nacional de Bogotá.',
+    'En mil novecientos noventa y ocho descubrimos que la expansión del universo se acelera. Para explicarlo sin inventar una energía oscura misteriosa, Castañeda explora otra ruta: modificar la gravedad de Einstein.',
+    'Si en la relatividad clásica el espacio-tiempo es una tela con elasticidad fija, en la gravedad efe de erre esa tela cambia su rigidez cuando se estira a escalas cósmicas gigantescas.',
+    'Pero esas ecuaciones tenían una fuga matemática en los bordes. Es como auditar un banco mirando solo los escritorios sin contar el dinero que cruza por las puertas y ventanas.',
+    'En dos mil diez, junto a Alejandro Guarnizo y Juan Manuel Tejeiro, Castañeda calculó el término de frontera exacto que sella ese balance, un aporte que supera las cien citas científicas.',
+    'Desde la cúpula del observatorio y sus charlas de Jueves bajo las estrellas, enseña que aunque no podamos encerrar el cosmos en un frasco, la geometría del espacio-tiempo delata su presencia.'
+  ];
+
+  const SAY = {
+    'Einstein': 'ainstain',
+    'Guarnizo': 'guarniso',
+    'Tejeiro': 'tejeiro'
+  };
+
+  const WORDS = [];
+  const AUDIO_SRC = '';
+
+  // ================= 3. Formatos =================
+  const FORMATS = {
+    '9:16': { ar: [9, 16], foco: .40, accion: [.08, .62], subs: [.655, .82], maxPal: 4, maxCar: 20 },
+    '16:9': { ar: [16, 9], foco: .44, accion: [.07, .74], subs: [.79, .92], maxPal: 7, maxCar: 38 },
+    '1:1': { ar: [1, 1], foco: .42, accion: [.07, .70], subs: [.75, .90], maxPal: 5, maxCar: 26 },
+    '4:5': { ar: [4, 5], foco: .41, accion: [.07, .68], subs: [.72, .88], maxPal: 5, maxCar: 24 }
+  };
+  const Q = new URLSearchParams(typeof location !== 'undefined' ? location.search : '');
+  const FMT_ID = FORMATS[Q.get('formato')] ? Q.get('formato') : CONFIG.formato;
+  const FMT = FORMATS[FMT_ID];
+  const RENDER = Q.has('render') || Q.has('t');
+  document.body.dataset.formato = FMT_ID;
+  if (RENDER) document.body.classList.add('render');
+
+  // ================= 4. Tokens y utilidades =================
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const rootCS = getComputedStyle(document.documentElement);
+  const tok = n => rootCS.getPropertyValue(n).trim();
+  const C = {
+    bg: tok('--bg'), panel: tok('--panel'), line: tok('--line'), ink: tok('--ink'), muted: tok('--muted'),
+    accent: tok('--accent'), accent2: tok('--accent-2'), ok: tok('--ok'), warn: tok('--warn')
+  };
+  const FONT = { display: tok('--display'), body: tok('--body'), mono: tok('--mono') };
+
+  const TAU = Math.PI * 2;
+  const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+  const seg = (t, a, b) => clamp((t - a) / (b - a));
+  const lerp = (a, b, k) => a + (b - a) * k;
+  const ease = x => 1 - Math.pow(1 - x, 3);
+  const easeIO = x => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+  const q4 = x => x < .5 ? 8 * x ** 4 : 1 - Math.pow(-2 * x + 2, 4) / 2;
+  const outExpo = x => x >= 1 ? 1 : 1 - Math.pow(2, -10 * x);
+  const inExpo = x => x <= 0 ? 0 : Math.pow(2, 10 * x - 10);
+  const outBack = x => { const c1 = 1.70158, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); };
+  const pop = (t, a, d = .35) => { const k = seg(t, a, a + d); return k <= 0 ? 0 : k >= 1 ? 1 : ease(k) * (1 + .18 * Math.sin(k * Math.PI)); };
+  function spring(t, zeta = .75, f = 2) {
+    if (t <= 0) return 0;
+    const w = TAU * f;
+    if (zeta >= 1) return 1 - Math.exp(-w * t) * (1 + w * t);
+    const wd = w * Math.sqrt(1 - zeta * zeta);
+    return 1 - Math.exp(-zeta * w * t) * (Math.cos(wd * t) + (zeta * w / wd) * Math.sin(wd * t));
+  }
+  function hexRGB(hex) {
+    let h = hex.replace('#', '');
+    if (h.length === 3) h = h.split('').map(c => c + c).join('');
+    const n = parseInt(h, 16);
+    return [n >> 16 & 255, n >> 8 & 255, n & 255];
+  }
+  const rgba = (hex, a) => { const [r, g, b] = hexRGB(hex); return `rgba(${r},${g},${b},${a})`; };
+  const mix = (h1, h2, k) => { const a = hexRGB(h1), b = hexRGB(h2); return `rgb(${a.map((v, i) => Math.round(lerp(v, b[i], k))).join(',')})`; };
+  function rng(seed) {
+    return () => {
+      seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+      let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+      t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  }
+  function gauss(r) {
+    let u = 0, v = 0;
+    while (!u) u = r();
+    while (!v) v = r();
+    return Math.sqrt(-2 * Math.log(u)) * Math.cos(TAU * v);
+  }
+
+  // ================= 5. Lienzo, mundo y cámara =================
+  const frameEl = document.getElementById('frame');
+  const cv = document.getElementById('cv');
+  const ctx = cv.getContext('2d');
+  const subsEl = document.getElementById('subs');
+  let W = 1, H = 1, DPR = 1, ready = false;
+  function resize() {
+    const r = frameEl.getBoundingClientRect();
+    DPR = Math.min(3, window.devicePixelRatio || 1);
+    W = Math.max(1, r.width); H = Math.max(1, r.height);
+    cv.width = Math.round(W * DPR); cv.height = Math.round(H * DPR);
+    if (ready) paint();
+  }
+
+  function frameInfo() {
+    const u = Math.min(W, H) / 100, Y = f => (f - FMT.foco) * H / u;
+    const left = -W / 2 / u, right = W / 2 / u, pad = 4;
+    const x0 = left + pad, x1 = right - pad, y0 = Y(FMT.accion[0]), y1 = Y(FMT.accion[1]);
+    return {
+      w: W / u, h: H / u, left, right, top: Y(0), bottom: Y(1), subsTop: Y(FMT.subs[0]), subsBottom: Y(FMT.subs[1]),
+      area: { x0, x1, y0, y1, w: x1 - x0, h: y1 - y0, cx: (x0 + x1) / 2, cy: (y0 + y1) / 2, s: Math.min(x1 - x0, y1 - y0) },
+      vertical: H > W * 1.2, horizontal: W > H * 1.2, formato: FMT_ID
+    };
+  }
+  function track(t, K) {
+    if (t <= K[0][0]) return { x: K[0][1], y: K[0][2], z: K[0][3] };
+    for (let i = 0; i < K.length - 1; i++) {
+      const a = K[i], b = K[i + 1];
+      if (t < b[0]) { const k = q4(seg(t, a[0], b[0])); return { x: lerp(a[1], b[1], k), y: lerp(a[2], b[2], k), z: a[3] * Math.pow(b[3] / a[3], k) }; }
+    }
+    const l = K[K.length - 1];
+    return { x: l[1], y: l[2], z: l[3] };
+  }
+  function beginWorld(cam) {
+    const u = Math.min(W, H) / 100 * cam.z;
+    ctx.save();
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    ctx.translate(W / 2, H * FMT.foco); ctx.scale(u, u); ctx.translate(-cam.x, -cam.y);
+  }
+  function bleed(fill, a = 1) {
+    if (a <= 0) return;
+    ctx.save(); ctx.setTransform(DPR, 0, 0, DPR, 0, 0); ctx.globalAlpha = a;
+    if (Array.isArray(fill)) { const gr = ctx.createLinearGradient(0, 0, 0, H); gr.addColorStop(0, fill[0]); gr.addColorStop(1, fill[1]); ctx.fillStyle = gr; }
+    else ctx.fillStyle = fill;
+    ctx.fillRect(0, 0, W, H); ctx.restore();
+  }
+  function fixed(fn) {
+    const u = Math.min(W, H) / 100;
+    ctx.save(); ctx.setTransform(DPR * u, 0, 0, DPR * u, DPR * W / 2, DPR * H * FMT.foco); fn(); ctx.restore();
+  }
+  function scrim(a = .55) {
+    if (a <= 0 || CONFIG.subtitulos === 'no') return;
+    ctx.save(); ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    const y0 = H * FMT.accion[1], y1 = H * FMT.subs[0];
+    const gr = ctx.createLinearGradient(0, y0, 0, y1);
+    gr.addColorStop(0, rgba(C.bg, 0)); gr.addColorStop(1, rgba(C.bg, a));
+    ctx.fillStyle = gr; ctx.fillRect(0, y0, W, y1 - y0);
+    ctx.fillStyle = rgba(C.bg, a); ctx.fillRect(0, y1, W, H - y1);
+    ctx.restore();
+  }
+
+  // ================= 6. Ayudantes de dibujo (unidades de mundo) =================
+  function txt(s, x, y, o = {}) {
+    ctx.save();
+    ctx.font = `${o.w || 700} ${o.size || 5}px ${o.family || FONT.display}`;
+    ctx.fillStyle = o.color || C.ink; ctx.globalAlpha *= o.a ?? 1;
+    ctx.textAlign = o.align || 'center'; ctx.textBaseline = o.base || 'middle';
+    ctx.fillText(s, x, y); ctx.restore();
+  }
+  function line(x0, y0, x1, y1) { ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1, y1); ctx.stroke(); }
+  function rrect(x, y, w, h, r) { ctx.beginPath(); if (ctx.roundRect) ctx.roundRect(x, y, w, h, r); else ctx.rect(x, y, w, h); }
+  function dot(x, y, r, color, a = 1) { if (a <= 0 || r <= 0) return; ctx.save(); ctx.globalAlpha *= a; ctx.fillStyle = color; ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); ctx.fill(); ctx.restore(); }
+
+  // ================= 7. Íconos genéricos =================
+  function ring(x, y, r, a, color = C.accent, lw = .7) {
+    if (a <= 0 || r <= 0) return;
+    ctx.save(); ctx.globalAlpha *= a; ctx.strokeStyle = color; ctx.lineWidth = lw;
+    ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); ctx.stroke(); ctx.restore();
+  }
+  function brackets(x, y, s, a, color = C.accent) {
+    if (a <= 0) return;
+    const l = s * .3;
+    ctx.save(); ctx.globalAlpha *= a; ctx.strokeStyle = color; ctx.lineWidth = .7; ctx.lineCap = 'round';
+    ctx.beginPath();
+    for (const [sx, sy] of [[-1, -1], [1, -1], [1, 1], [-1, 1]]) { const px = x + sx * s, py = y + sy * s; ctx.moveTo(px, py - sy * l); ctx.lineTo(px, py); ctx.lineTo(px - sx * l, py); }
+    ctx.stroke(); ctx.restore();
+  }
+  function arrow(x0, y0, x1, y1, a, color = C.ink, lw = .7) {
+    if (a <= 0) return;
+    const ang = Math.atan2(y1 - y0, x1 - x0), h = Math.max(1.4, lw * 3);
+    ctx.save(); ctx.globalAlpha *= a; ctx.strokeStyle = color; ctx.lineWidth = lw; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    line(x0, y0, x1, y1);
+    ctx.beginPath(); ctx.moveTo(x1 - h * Math.cos(ang - .5), y1 - h * Math.sin(ang - .5)); ctx.lineTo(x1, y1); ctx.lineTo(x1 - h * Math.cos(ang + .5), y1 - h * Math.sin(ang + .5)); ctx.stroke();
+    ctx.restore();
+  }
+  function check(x, y, r, a) {
+    if (r <= 0 || a <= 0) return;
+    ctx.save(); ctx.globalAlpha *= a; ctx.fillStyle = C.ok; ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); ctx.fill();
+    ctx.strokeStyle = C.bg; ctx.lineWidth = r * .22; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    ctx.beginPath(); ctx.moveTo(x - r * .42, y + r * .02); ctx.lineTo(x - r * .1, y + r * .34); ctx.lineTo(x + r * .45, y - r * .3); ctx.stroke();
+    ctx.restore();
+  }
+  function cross(x, y, s, a, color = C.warn) {
+    if (a <= 0) return;
+    ctx.save(); ctx.globalAlpha *= a; ctx.strokeStyle = color; ctx.lineWidth = Math.max(.5, s * .25); ctx.lineCap = 'round';
+    line(x - s, y - s, x + s, y + s); line(x - s, y + s, x + s, y - s); ctx.restore();
+  }
+  function person(x, y, s, color = C.ink, a = 1) {
+    if (s <= 0 || a <= 0) return;
+    ctx.save(); ctx.globalAlpha *= a; ctx.fillStyle = color;
+    ctx.beginPath(); ctx.arc(x, y - s * .45, s * .32, 0, TAU); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(x, y + s * .42, s * .58, s * .45, 0, Math.PI, TAU); ctx.fill();
+    ctx.restore();
+  }
+  function bubble(x, y, s, glyph, fill = C.ink, a = 1) {
+    if (s <= 0 || a <= 0) return;
+    ctx.save(); ctx.globalAlpha *= a; ctx.fillStyle = fill;
+    rrect(x - s, y - s * .75, s * 2, s * 1.5, s * .45); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(x - s * .55, y + s * .6); ctx.lineTo(x - s * .95, y + s * 1.15); ctx.lineTo(x - s * .1, y + s * .6); ctx.fill();
+    ctx.restore();
+    txt(glyph, x, y + s * .06, { size: s * 1.2, color: C.bg, w: 800, a });
+  }
+  function calendar(x, y, s, month, day, a = 1) {
+    if (s <= 0 || a <= 0) return;
+    ctx.save(); ctx.globalAlpha *= a; ctx.fillStyle = C.panel; ctx.strokeStyle = C.ink; ctx.lineWidth = .5;
+    rrect(x - s, y - s, s * 2, s * 2, s * .22); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = C.accent; rrect(x - s, y - s, s * 2, s * .6, [s * .22, s * .22, 0, 0]); ctx.fill();
+    ctx.restore();
+    txt(month, x, y - s * .69, { size: s * .38, color: C.bg, family: FONT.mono, a });
+    txt(day, x, y + s * .36, { size: s * 1.05, w: 800, a });
+  }
+  function bulb(x, y, s, on = 1, a = 1) {
+    if (s <= 0 || a <= 0) return;
+    ctx.save(); ctx.globalAlpha *= a;
+    if (on > 0) { const gr = ctx.createRadialGradient(x, y - s * .2, s * .2, x, y - s * .2, s * 2.2); gr.addColorStop(0, rgba(C.accent, .45 * on)); gr.addColorStop(1, rgba(C.accent, 0)); ctx.fillStyle = gr; ctx.beginPath(); ctx.arc(x, y - s * .2, s * 2.2, 0, TAU); ctx.fill(); }
+    ctx.fillStyle = on > .5 ? C.accent : C.panel; ctx.strokeStyle = C.ink; ctx.lineWidth = s * .08;
+    ctx.beginPath(); ctx.arc(x, y - s * .25, s * .62, Math.PI * .8, Math.PI * 2.2); ctx.lineTo(x + s * .3, y + s * .55); ctx.lineTo(x - s * .3, y + s * .55); ctx.closePath(); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = C.muted; ctx.fillRect(x - s * .3, y + s * .62, s * .6, s * .28);
+    ctx.restore();
+  }
+
+  // ================= 8. Dibujos y activos de este explainer =================
+  const imgCastaneda = typeof document !== 'undefined' ? document.getElementById('img-castaneda') : null;
+  const imgEtiqueta  = typeof document !== 'undefined' ? document.getElementById('img-etiqueta') : null;
+  const imgSelloUnal = typeof document !== 'undefined' ? document.getElementById('img-sello-unal') : null;
+  const imgSelloMainz = typeof document !== 'undefined' ? document.getElementById('img-sello-mainz') : null;
+  const imgEinstein  = typeof document !== 'undefined' ? document.getElementById('img-einstein') : null;
+  const imgPaper     = typeof document !== 'undefined' ? document.getElementById('img-paper') : null;
+
+  const STARS_BG = (() => {
+    const r = rng(1803);
+    return Array.from({ length: 110 }, () => ({ fx: r(), fy: r(), sz: .25 + r() * .55, ph: r() * TAU }));
+  })();
+
+  const GALAXY_STARS = (() => {
+    const r = rng(404);
+    return Array.from({ length: 85 }, (_, i) => {
+      const arm = i % 2;
+      const rad = .08 + Math.pow(r(), .85) * .88;
+      const ang = arm * Math.PI + rad * 4.2 + (r() - .5) * .45;
+      return { rad, ang, sz: .6 + r() * .9, col: rad < .25 ? '#FFB454' : i % 4 === 0 ? '#F2F3FA' : '#6FB6FF' };
+    });
+  })();
+
+  const AUDIT_DESKS = (() => {
+    const pts = [];
+    for (let r = 0; r < 3; r++) {
+      for (let c = 0; c < 3; c++) {
+        pts.push({ u: (c - 1) * .28, v: (r - 1) * .28 });
+      }
+    }
+    return pts;
+  })();
+
+  const LEAK_ARROWS = [
+    { side: 0, pos: -.3, ang: -Math.PI / 2 },
+    { side: 0, pos: .25, ang: -Math.PI / 2 },
+    { side: 1, pos: -.25, ang: 0 },
+    { side: 1, pos: .3, ang: 0 },
+    { side: 2, pos: -.25, ang: Math.PI / 2 },
+    { side: 2, pos: .3, ang: Math.PI / 2 },
+    { side: 3, pos: -.3, ang: Math.PI },
+    { side: 3, pos: .25, ang: Math.PI }
+  ];
+
+  // Fondo de cielo profundo y malla gravitacional sutil que toca los 4 bordes
+  function cosmosBg(F, g, a = 1) {
+    ctx.save(); ctx.globalAlpha *= a;
+    ctx.strokeStyle = rgba(C.line, .26); ctx.lineWidth = .35;
+    for (let x = F.left * 2; x <= F.right * 2; x += 14) line(x, F.top * 2, x, F.bottom * 2);
+    for (let y = F.top * 2; y <= F.bottom * 2; y += 14) line(F.left * 2, y, F.right * 2, y);
+    STARS_BG.forEach(s => {
+      const x = lerp(F.left * 1.5, F.right * 1.5, s.fx);
+      const y = lerp(F.top * 1.5, F.bottom * 1.5, s.fy);
+      const tw = .5 + .5 * Math.sin(g * 1.8 + s.ph);
+      dot(x, y, s.sz, C.ink, .25 + .45 * tw);
+    });
+    ctx.restore();
+  }
+
+  // Medallón con el retrato real de Leonardo Castañeda Colorado
+  function castanedaMedal(x, y, r, a = 1, glow = 0) {
+    if (a <= 0 || r <= 0) return;
+    ctx.save(); ctx.globalAlpha *= a;
+    if (glow > 0) {
+      const grH = ctx.createRadialGradient(x, y, r * .7, x, y, r * 1.55);
+      grH.addColorStop(0, rgba(C.accent, .38 * glow));
+      grH.addColorStop(1, rgba(C.accent, 0));
+      ctx.fillStyle = grH;
+      ctx.beginPath(); ctx.arc(x, y, r * 1.55, 0, TAU); ctx.fill();
+    }
+    ctx.beginPath(); ctx.arc(x, y, r, 0, TAU);
+    const grBg = ctx.createRadialGradient(x, y - r * .2, r * .1, x, y, r);
+    grBg.addColorStop(0, '#223166');
+    grBg.addColorStop(1, '#0C1228');
+    ctx.fillStyle = grBg; ctx.fill();
+
+    ctx.save();
+    ctx.beginPath(); ctx.arc(x, y, r * .96, 0, TAU); ctx.clip();
+    if (imgCastaneda && imgCastaneda.complete && imgCastaneda.naturalWidth > 0) {
+      const iw = r * 2.1, ih = iw * imgCastaneda.naturalHeight / imgCastaneda.naturalWidth;
+      ctx.drawImage(imgCastaneda, x - iw / 2, y - r * .92, iw, ih);
+    } else {
+      person(x, y + r * .15, r * .75, C.accent, 1);
+    }
+    ctx.restore();
+
+    ring(x, y, r, 1, glow > .2 ? C.accent : C.accent2, 1.0);
+    ring(x, y, r * 1.09, .55, C.accent, .45);
+    ctx.restore();
+  }
+
+  // Sello institucional sobre disco de pergamino claro para máximo contraste
+  function sealBadge(img, x, y, r, a = 1) {
+    if (a <= 0 || r <= 0) return;
+    ctx.save(); ctx.globalAlpha *= a;
+    ctx.fillStyle = '#F4EFE6';
+    ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); ctx.fill();
+    if (img && img.complete && img.naturalWidth > 0) {
+      ctx.drawImage(img, x - r * .92, y - r * .92, r * 1.84, r * 1.84);
+    }
+    ring(x, y, r, .95, C.accent, .7);
+    ctx.restore();
+  }
+
+  // Frasco de cristal transparente con la etiqueta real "100 g de Materia Oscura"
+  function darkMatterJar(x, y, s, a = 1) {
+    if (a <= 0 || s <= 0) return;
+    const w = s * 1.5, h = s * 2.05;
+    ctx.save(); ctx.globalAlpha *= a;
+    // Tapón de corcho
+    ctx.fillStyle = '#B07D4F'; ctx.strokeStyle = C.ink; ctx.lineWidth = .55;
+    rrect(x - w * .28, y - h * .62, w * .56, h * .14, s * .06); ctx.fill(); ctx.stroke();
+    // Cuello del frasco
+    ctx.fillStyle = rgba(C.accent2, .10); ctx.strokeStyle = C.accent2; ctx.lineWidth = .75;
+    rrect(x - w * .34, y - h * .49, w * .68, h * .09, s * .04); ctx.fill(); ctx.stroke();
+    // Cuerpo de cristal transparente
+    ctx.fillStyle = rgba(C.accent2, .08); ctx.strokeStyle = C.accent2; ctx.lineWidth = .85;
+    rrect(x - w / 2, y - h * .40, w, h * .88, s * .18); ctx.fill(); ctx.stroke();
+    // Brillos laterales del vidrio
+    ctx.strokeStyle = rgba(C.ink, .35); ctx.lineWidth = .5;
+    line(x - w * .41, y - h * .28, x - w * .41, y + h * .34);
+
+    // Etiqueta real pegada en el frente del frasco
+    const lw = w * .84, lh = lw * .68, lx = x - lw / 2, ly = y - lh * .36;
+    ctx.fillStyle = '#F4EFE6';
+    rrect(lx, ly, lw, lh, s * .04); ctx.fill();
+    if (imgEtiqueta && imgEtiqueta.complete && imgEtiqueta.naturalWidth > 0) {
+      ctx.save();
+      rrect(lx, ly, lw, lh, s * .04); ctx.clip();
+      ctx.drawImage(imgEtiqueta, lx, ly, lw, lh);
+      ctx.restore();
+    }
+    ctx.strokeStyle = C.accent; ctx.lineWidth = .5;
+    rrect(lx, ly, lw, lh, s * .04); ctx.stroke();
+    ctx.restore();
+  }
+
+  // Silueta arquitectónica de la cúpula histórica del Observatorio Astronómico Nacional (1803)
+  function oanObservatory(F, baseY, a = 1) {
+    const cx = F.area.cx, s = F.area.s;
+    ctx.save(); ctx.globalAlpha *= a;
+    // Suelo y jardines hasta F.bottom
+    const gr = ctx.createLinearGradient(0, baseY, 0, F.bottom * 2);
+    gr.addColorStop(0, '#101732'); gr.addColorStop(1, '#070A18');
+    ctx.fillStyle = gr;
+    ctx.fillRect(F.left * 3, baseY, F.w * 6, F.bottom * 3 - baseY);
+    ctx.strokeStyle = rgba(C.accent2, .4); ctx.lineWidth = .6;
+    line(F.left * 3, baseY, F.right * 3, baseY);
+
+    // Torre octogonal histórica y cúpula del OAN
+    const tw = s * .34, th = s * .24;
+    ctx.fillStyle = '#151E3F'; ctx.strokeStyle = C.accent2; ctx.lineWidth = .75;
+    // Cúpula semiesférica superior
+    ctx.beginPath();
+    ctx.arc(cx, baseY - th, tw * .42, Math.PI, 0);
+    ctx.closePath(); ctx.fill(); ctx.stroke();
+    // Ranura del telescopio en la cúpula
+    ctx.strokeStyle = C.accent; ctx.lineWidth = 1.1;
+    line(cx + tw * .1, baseY - th - tw * .38, cx + tw * .35, baseY - th - tw * .62);
+
+    // Cuerpo octogonal de la torre
+    ctx.fillStyle = '#111833'; ctx.strokeStyle = C.line; ctx.lineWidth = .75;
+    rrect(cx - tw / 2, baseY - th, tw, th, 1.2); ctx.fill(); ctx.stroke();
+    // Ventanas clásicas del observatorio
+    ctx.fillStyle = rgba(C.accent, .45);
+    for (const dx of [-tw * .26, 0, tw * .26]) {
+      rrect(cx + dx - 1.8, baseY - th * .72, 3.6, 5.5, 1.5); ctx.fill();
+    }
+    ctx.restore();
+  }
+
+  function figureFull(x, yFeet, h, color = C.ink, a = 1, lookUp = 0) {
+    if (a <= 0 || h <= 0) return;
+    ctx.save(); ctx.globalAlpha *= a; ctx.fillStyle = color; ctx.strokeStyle = color; ctx.lineCap = 'round';
+    const hx = x - lookUp * h * .04, hy = yFeet - h * .86;
+    ctx.beginPath(); ctx.arc(hx, hy, h * .12, 0, TAU); ctx.fill();
+    rrect(x - h * .15, yFeet - h * .7, h * .3, h * .42, h * .09); ctx.fill();
+    ctx.lineWidth = h * .09;
+    line(x - h * .07, yFeet - h * .3, x - h * .09, yFeet);
+    line(x + h * .07, yFeet - h * .3, x + h * .09, yFeet);
+    ctx.restore();
+  }
+
+  // ================= 9. Escenas =================
+  const SCENES = [
+    // ESCENA 1: El frasco de 100 g de materia oscura y la rotación galáctica
+    {
+      alt: 'Un frasco transparente etiquetado cien gramos de materia oscura deja pasar la luz. La cámara se aleja y muestra una galaxia espiral envuelta en un halo invisible con su curva de rotación plana.',
+      cam: F => {
+        const A = F.area, jy = A.y0 + A.h * .24;
+        return [
+          [0, A.cx, jy, 2.25],
+          [.5, A.cx, jy, 2.25],
+          [F.at('giran') + .35, 0, 0, 1],
+          [F.at('sostiene') + .4, 0, 3, 1.04]
+        ];
+      },
+      draw(t, F) {
+        const A = F.area;
+        cosmosBg(F, F.g, 1);
+
+        // Parte superior: El frasco transparente con la etiqueta real atravesado por haces de luz
+        const jx = A.cx, jy = A.y0 + A.h * .23, js = A.s * .155;
+        const kRay = ease(seg(t, .15, F.at('oscura') + .4));
+        if (kRay > 0) {
+          ctx.save(); ctx.strokeStyle = C.accent; ctx.lineWidth = .9; ctx.globalAlpha = .75;
+          for (const dy of [-4.5, 0, 4.5]) {
+            line(F.left * 1.4, jy + dy, lerp(F.left * 1.4, F.right * 1.4, kRay), jy + dy);
+          }
+          ctx.restore();
+        }
+        darkMatterJar(jx, jy, js, 1);
+
+        // Parte media e inferior: Galaxia espiral rotando rápidamente dentro de un halo punteado de materia oscura
+        const gx = A.cx, gy = A.y0 + A.h * .68, gr = A.s * .28;
+        const kGal = ease(seg(t, F.at('mirar') - .2, F.at('galaxias') + .5));
+        const kHalo = ease(seg(t, F.at('velocidades'), F.at('sostiene') + .4));
+
+        if (kGal > 0) {
+          // Halo invisible punteado que sostiene la galaxia
+          if (kHalo > 0) {
+            ctx.save();
+            ctx.strokeStyle = C.accent; ctx.lineWidth = .85; ctx.setLineDash([3, 2.2]);
+            ctx.globalAlpha = kHalo * .8;
+            ctx.beginPath(); ctx.arc(gx, gy, gr * 1.18, 0, TAU); ctx.stroke();
+            ctx.beginPath(); ctx.arc(gx, gy, gr * .85, 0, TAU); ctx.stroke();
+            ctx.restore();
+          }
+          // Estrellas de los brazos espirales girando a alta velocidad
+          GALAXY_STARS.forEach(st => {
+            const ang = st.ang + F.g * (1.8 / (.35 + st.rad * .6));
+            const sx = gx + Math.cos(ang) * gr * st.rad;
+            const sy = gy + Math.sin(ang) * gr * st.rad * .58;
+            dot(sx, sy, st.sz * kGal, st.col, .9 * kGal);
+          });
+          dot(gx, gy, gr * .12 * kGal, C.accent, 1);
+
+          // Curva de rotación plana (ámbar) vs caída esperada (gris punteada) en la base hasta F.bottom
+          const cy0 = gy + gr * .85, cx0 = A.x0 + A.w * .14, cw = A.w * .72, ch = A.s * .16;
+          if (kHalo > 0) {
+            ctx.save(); ctx.lineWidth = .7;
+            // Curva kepleriana que cae (lo que pasaría sin materia oscura)
+            ctx.strokeStyle = C.muted; ctx.setLineDash([2, 2]);
+            ctx.beginPath();
+            for (let i = 0; i <= 24; i++) {
+              const q = i / 24, px = cx0 + q * cw;
+              const py = cy0 - ch * (q < .2 ? q * 4.5 : .9 / Math.sqrt(q * 5));
+              i ? ctx.lineTo(px, py) : ctx.moveTo(px, py);
+            }
+            ctx.stroke();
+            // Curva plana real (sostenida por el halo invisible)
+            ctx.strokeStyle = C.accent; ctx.setLineDash([]); ctx.lineWidth = 1.25;
+            ctx.beginPath();
+            const lim = Math.floor(24 * kHalo);
+            for (let i = 0; i <= lim; i++) {
+              const q = i / 24, px = cx0 + q * cw;
+              const py = cy0 - ch * (q < .2 ? q * 4.5 : .9);
+              i ? ctx.lineTo(px, py) : ctx.moveTo(px, py);
+            }
+            ctx.stroke();
+            ctx.restore();
+          }
+        }
+        scrim(.62);
+      }
+    },
+
+    // ESCENA 2: Retrato real de Leonardo Castañeda, sellos UNAL y Mainz, y cúpula del OAN (1803)
+    {
+      alt: 'Retrato real de Leonardo Castañeda acompañado por los sellos de la Universidad Nacional y la Universidad de Maguncia sobre la cúpula histórica del Observatorio Astronómico Nacional.',
+      cam: F => [
+        [0, 0, -8, 1.24],
+        [F.at('maguncia') + .3, 0, 0, 1.02],
+        [F.at('observatorio') + .4, 0, 3, .98]
+      ],
+      draw(t, F) {
+        const A = F.area;
+        cosmosBg(F, F.g, 1);
+
+        // Cúpula histórica del OAN (1803) en la base de la zona de acción
+        const baseY = A.y0 + A.h * .82;
+        oanObservatory(F, baseY, 1);
+
+        // HÉROE: Medallón central con el retrato real de Leonardo Castañeda
+        const px = A.cx, py = A.y0 + A.h * .27, pr = A.s * .185;
+        const kPor = pop(t, 0, .45);
+        const kGlow = ease(seg(t, F.at('castaneda') - .1, F.at('nacional') + .3));
+        castanedaMedal(px, py, pr * kPor, 1, kGlow);
+
+        const kBr = ease(seg(t, F.at('castaneda') - .1, F.at('castaneda') + .35)) * (1 - ease(seg(t, F.at('maguncia'), F.at('alemania'))));
+        if (kBr > 0) brackets(px, py, pr * 1.18, kBr, C.accent);
+
+        // Sello UNAL / OAN 1803 a la izquierda y Sello Johannes Gutenberg-Universität Mainz a la derecha
+        const sr = A.s * .108, sy = A.y0 + A.h * .52;
+        const sxL = A.cx - A.w * .28, sxR = A.cx + A.w * .28;
+        const kUnal = pop(t, F.at('nacional') - .15, .4);
+        const kMainz = pop(t, F.at('maguncia') - .15, .4);
+
+        if (kUnal > 0) {
+          ctx.save(); ctx.strokeStyle = C.accent2; ctx.lineWidth = .6; ctx.setLineDash([2, 1.8]);
+          line(px - pr * .7, py + pr * .6, sxL, sy - sr);
+          ctx.restore();
+          sealBadge(imgSelloUnal, sxL, sy, sr * kUnal, 1);
+        }
+        if (kMainz > 0) {
+          ctx.save(); ctx.strokeStyle = C.accent; ctx.lineWidth = .6; ctx.setLineDash([2, 1.8]);
+          line(px + pr * .7, py + pr * .6, sxR, sy - sr);
+          ctx.restore();
+          sealBadge(imgSelloMainz, sxR, sy, sr * kMainz, 1);
+        }
+
+        // Halo celeste exterior que enmarca toda la composición cuando dice "Observatorio Astronómico Nacional"
+        const kOan = ease(seg(t, F.at('observatorio') - .2, F.at('bogota') + .4));
+        if (kOan > 0) {
+          ring(A.cx, A.y0 + A.h * .46, A.s * (.42 + .03 * kOan), .6 * kOan, C.accent, .75);
+        }
+        scrim(.62);
+      }
+    },
+
+    // ESCENA 3: 1998, la expansión acelerada y la encrucijada hacia Einstein f(R)
+    {
+      alt: 'En mil novecientos noventa y ocho las galaxias se alejan aceleradamente. El camino se divide entre una incógnita oscura que se apaga y el retrato de Einstein cuya malla geométrica se transforma.',
+      cam: F => [
+        [0, 0, -10, 1.18],
+        [F.at('energia') + .2, 0, 0, 1],
+        [F.at('einstein') + .3, F.area.w * .04, 3, 1.03]
+      ],
+      draw(t, F) {
+        const A = F.area;
+        cosmosBg(F, F.g, 1);
+
+        // Parte superior: Expansión acelerada (1998) con anillos y galaxias alejándose
+        const topX = A.cx, topY = A.y0 + A.h * .20;
+        const kExp = easeIO(seg(t, 0, F.at('acelera') + .5));
+        for (let i = 0; i < 6; i++) {
+          const ang = (i / 6) * TAU + .3;
+          const d = A.s * (.08 + .16 * kExp);
+          const gx = topX + Math.cos(ang) * d, gy = topY + Math.sin(ang) * d * .65;
+          arrow(topX + Math.cos(ang) * A.s * .05, topY + Math.sin(ang) * A.s * .03, gx, gy, .85, C.accent, .75);
+          dot(gx, gy, 1.8, C.accent, 1);
+        }
+        calendar(topX, topY, A.s * .095 * pop(t, 0), 'SN Ia', '1998', 1);
+
+        // Encrucijada: Bifurcación desde topY hacia dos ramas en la mitad inferior de F.area
+        const leftX = A.cx - A.w * .26, rightX = A.cx + A.w * .24, branchY = A.y0 + A.h * .54;
+        const kLeft = ease(seg(t, F.at('energia') - .2, F.at('misteriosa') + .2));
+        const kRight = ease(seg(t, F.at('ruta') - .1, F.at('einstein') + .4));
+
+        // Rama izquierda: Energía oscura misteriosa (se atenúa cuando elige la ruta geométrica)
+        if (kLeft > 0) {
+          const dim = 1 - .6 * kRight;
+          arrow(topX, topY + A.s * .11, leftX, branchY - A.s * .13, kLeft * dim, C.muted, .75);
+          ring(leftX, branchY, A.s * .11, kLeft * dim, C.muted, .7);
+          bubble(leftX, branchY, A.s * .075 * kLeft, '?', C.muted, kLeft * dim);
+          if (kRight > .3) cross(leftX + A.s * .09, branchY - A.s * .09, A.s * .035, kRight, C.warn);
+        }
+
+        // Rama derecha (HÉROE): Modificar la gravedad de Einstein (con retrato real de Einstein y malla curva)
+        if (kRight > 0) {
+          arrow(topX, topY + A.s * .11, rightX, branchY - A.s * .15, kRight, C.accent, 1.1);
+          const ew = A.s * .23 * kRight, eh = ew * 1.18;
+          ctx.save();
+          ctx.fillStyle = '#080C1C';
+          rrect(rightX - ew / 2, branchY - eh / 2, ew, eh, 2.2); ctx.fill();
+          if (imgEinstein && imgEinstein.complete && imgEinstein.naturalWidth > 0) {
+            ctx.save();
+            rrect(rightX - ew / 2, branchY - eh / 2, ew, eh, 2.2); ctx.clip();
+            ctx.drawImage(imgEinstein, rightX - ew / 2, branchY - eh / 2, ew, eh);
+            ctx.restore();
+          } else {
+            person(rightX, branchY, ew * .4, C.accent, 1);
+          }
+          ctx.strokeStyle = C.accent; ctx.lineWidth = 1.0;
+          rrect(rightX - ew / 2, branchY - eh / 2, ew, eh, 2.2); ctx.stroke();
+          ctx.restore();
+          brackets(rightX, branchY, ew * .65, kRight, C.accent);
+          check(rightX + ew * .52, branchY - eh * .48, A.s * .045 * pop(t, F.at('einstein')), kRight);
+        }
+        scrim(.62);
+      }
+    },
+
+    // ESCENA 4: La tela elástica de Einstein vs. la gravedad modificada f(R)
+    {
+      alt: 'Una malla tridimensional del espacio-tiempo ocupa la pantalla: primero se curva en el centro con rigidez fija y luego cambia su rigidez en los bordes cósmicos impulsando las galaxias.',
+      cam: F => [
+        [0, 0, -4, 1.12],
+        [F.at('efe') + .2, 0, 0, 1],
+        [F.at('gigantescas') + .4, 0, 2, .96]
+      ],
+      draw(t, F) {
+        const A = F.area;
+        const kEin = ease(seg(t, 0, F.at('fija') + .3));
+        const kFR  = easeIO(seg(t, F.at('efe') - .1, F.at('gigantescas') + .4));
+
+        // Malla 3D de espacio-tiempo que cubre de borde a borde
+        const cx = A.cx, cy = A.y0 + A.h * .46;
+        const cols = 14, rows = 20;
+        const xSpan = F.w * 1.15, ySpan = F.h * 1.1;
+
+        function meshPt(c, r) {
+          const u = (c / cols - .5) * xSpan;
+          const v = (r / rows - .5) * ySpan;
+          const dist = Math.hypot(u, v * .75);
+          // Pozo gravitacional clásico en el centro
+          const well = kEin * 16 * Math.exp(-(dist * dist) / 260);
+          // Deformación no lineal f(R) en las escalas cósmicas exteriores
+          const outer = kFR * 9 * Math.sin(dist * .11 - F.g * 2) * clamp((dist - 14) / 22);
+          return { x: cx + u, y: cy + v + well - outer, dist };
+        }
+
+        // Líneas horizontales y verticales de la tela elástica
+        for (let r = 0; r <= rows; r++) {
+          ctx.save();
+          ctx.lineWidth = .65;
+          ctx.strokeStyle = kFR > .2 && (r < 5 || r > rows - 5) ? C.accent : C.accent2;
+          ctx.globalAlpha = .68;
+          ctx.beginPath();
+          for (let c = 0; c <= cols; c++) {
+            const p = meshPt(c, r);
+            c === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y);
+          }
+          ctx.stroke(); ctx.restore();
+        }
+        for (let c = 0; c <= cols; c++) {
+          ctx.save();
+          ctx.lineWidth = .55;
+          ctx.strokeStyle = kFR > .2 && (c < 3 || c > cols - 3) ? C.accent : rgba(C.accent2, .75);
+          ctx.globalAlpha = .52;
+          ctx.beginPath();
+          for (let r = 0; r <= rows; r++) {
+            const p = meshPt(c, r);
+            r === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y);
+          }
+          ctx.stroke(); ctx.restore();
+        }
+
+        // Masa central que hunde la tela clásica
+        const centerP = meshPt(cols / 2, rows / 2);
+        dot(centerP.x, centerP.y - 2, A.s * .075 * kEin, C.accent2, 1);
+        ring(centerP.x, centerP.y - 2, A.s * .13 * kEin, .75, C.ink, .7);
+
+        // En gravedad f(R), los bordes cósmicos cambian de rigidez (ondas ámbar y flechas hacia afuera)
+        if (kFR > 0) {
+          ring(cx, cy, A.s * (.34 + .1 * kFR), kFR * .85, C.accent, 1.1);
+          for (let i = 0; i < 8; i++) {
+            const ang = (i / 8) * TAU + .38;
+            const r0 = A.s * .28, r1 = A.s * (.38 + .08 * kFR);
+            arrow(
+              cx + Math.cos(ang) * r0, cy + Math.sin(ang) * r0,
+              cx + Math.cos(ang) * r1, cy + Math.sin(ang) * r1,
+              kFR, C.accent, .85
+            );
+          }
+        }
+        scrim(.62);
+      }
+    },
+
+    // ESCENA 5: La fuga matemática en los bordes (Analogía de la auditoría del banco)
+    {
+      alt: 'Un recinto con nueve escritorios en su interior tiene las paredes abiertas: flechas doradas se escapan por las puertas y ventanas encendiendo alertas rojas en los bordes.',
+      cam: F => [
+        [0, 0, 0, 1.15],
+        [F.at('auditar') + .2, 0, 0, 1],
+        [F.at('ventanas') + .3, 0, -2, 1.05]
+      ],
+      draw(t, F) {
+        const A = F.area;
+        cosmosBg(F, F.g, .7);
+
+        const cx = A.cx, cy = A.y0 + A.h * .46, boxS = A.s * .26;
+        const kBox = ease(seg(t, 0, F.at('bordes') + .2));
+        const kLeak = easeIO(seg(t, F.at('fuga') - .1, F.at('ventanas') + .4));
+
+        // Borde punteado e incompleto del volumen (con puertas y ventanas abiertas)
+        ctx.save();
+        ctx.fillStyle = rgba(C.panel, .75 * kBox);
+        rrect(cx - boxS, cy - boxS, boxS * 2, boxS * 2, 3); ctx.fill();
+        ctx.strokeStyle = C.warn; ctx.lineWidth = 1.1; ctx.setLineDash([5, 4.5]);
+        rrect(cx - boxS, cy - boxS, boxS * 2, boxS * 2, 3); ctx.stroke();
+        ctx.restore();
+
+        // Los 9 escritorios internos auditados con lupa
+        const kAudit = ease(seg(t, F.at('auditar') - .1, F.at('escritorios') + .3));
+        AUDIT_DESKS.forEach(d => {
+          const dx = cx + d.u * boxS * 2, dy = cy + d.v * boxS * 2;
+          ctx.save();
+          ctx.fillStyle = C.panel; ctx.strokeStyle = C.accent2; ctx.lineWidth = .65;
+          rrect(dx - 3.6, dy - 2.4, 7.2, 4.8, .8); ctx.fill(); ctx.stroke();
+          ctx.restore();
+          dot(dx, dy, 1.1, C.accent2, .9);
+        });
+
+        // Flechas de flujo (el dinero / las derivadas normales) que se escapan por las puertas y ventanas
+        if (kLeak > 0) {
+          LEAK_ARROWS.forEach((lk, i) => {
+            const p = clamp((kLeak * 1.3 - i * .04));
+            if (p <= 0) return;
+            let sx = cx, sy = cy;
+            if (lk.side === 0) { sx = cx + lk.pos * boxS * 2; sy = cy - boxS; }
+            else if (lk.side === 1) { sx = cx + boxS; sy = cy + lk.pos * boxS * 2; }
+            else if (lk.side === 2) { sx = cx + lk.pos * boxS * 2; sy = cy + boxS; }
+            else { sx = cx - boxS; sy = cy + lk.pos * boxS * 2; }
+            const len = A.s * .13 * p;
+            const ex = sx + Math.cos(lk.ang) * len, ey = sy + Math.sin(lk.ang) * len;
+            arrow(sx, sy, ex, ey, 1, C.accent, .9);
+            cross(ex + Math.cos(lk.ang) * 3.2, ey + Math.sin(lk.ang) * 3.2, 1.6, p, C.warn);
+          });
+          bubble(cx + boxS * .85, cy - boxS * .85, A.s * .065 * pop(t, F.at('fuga')), '!', C.warn, 1);
+        }
+        scrim(.62);
+      }
+    },
+
+    // ESCENA 6: El término de frontera de 2010 y el paper con +105 citas científicas
+    {
+      alt: 'Un marco dorado sella herméticamente la frontera del volumen con una insignia verde, y debajo se despliega el artículo científico de Guarnizo, Castañeda y Tejeiro con más de cien citas.',
+      cam: F => [
+        [0, 0, -6, 1.14],
+        [F.at('frontera') + .2, 0, 0, 1],
+        [F.at('citas') + .4, 0, 4, 1.06]
+      ],
+      draw(t, F) {
+        const A = F.area;
+        cosmosBg(F, F.g, .8);
+
+        // Parte superior: El volumen cuya hipersuperficie frontera se sella con el término de Castañeda, Guarnizo y Tejeiro
+        const cx = A.cx, cy = A.y0 + A.h * .22, boxS = A.s * .16;
+        const kSeal = easeIO(seg(t, F.at('termino') - .2, F.at('sella') + .35));
+
+        ctx.save();
+        ctx.fillStyle = rgba(C.panel, .88);
+        rrect(cx - boxS * 1.35, cy - boxS, boxS * 2.7, boxS * 2, 2.5); ctx.fill();
+        // El borde pasa de punteado a un contorno dorado continuo y sellado
+        ctx.strokeStyle = mix(C.warn, C.accent, kSeal);
+        ctx.lineWidth = lerp(.8, 1.6, kSeal);
+        if (kSeal < .6) ctx.setLineDash([4, 3]);
+        rrect(cx - boxS * 1.35, cy - boxS, boxS * 2.7, boxS * 2, 2.5); ctx.stroke();
+        ctx.restore();
+
+        // Nodos internos en equilibrio perfecto y check de balance cerrado
+        for (const dx of [-boxS * .75, 0, boxS * .75]) {
+          dot(cx + dx, cy, 1.8, kSeal > .5 ? C.ok : C.accent2, 1);
+          ring(cx + dx, cy, 4.2, .6, kSeal > .5 ? C.ok : C.accent2, .55);
+        }
+        if (kSeal > .5) {
+          check(cx + boxS * 1.35, cy - boxS, A.s * .052 * pop(t, F.at('sella')), 1);
+        }
+
+        // Parte media-inferior (HÉROE): El paper real de 2010 (recortado al documento blanco con el sello +105 CITAS)
+        const kPap = pop(t, F.at('diez') - .1, .5);
+        const kCit = ease(seg(t, F.at('supera') - .1, F.at('citas') + .4));
+        if (kPap > 0) {
+          const pw = A.w * .88 * kPap, ph = pw * .66;
+          const px = A.cx - pw / 2, py = A.y0 + A.h * .61 - ph / 2;
+          ctx.save();
+          ctx.fillStyle = '#050814';
+          rrect(px + 1.2, py + 1.6, pw, ph, 2.5); ctx.fill();
+          ctx.fillStyle = '#FFFFFF';
+          rrect(px, py, pw, ph, 2.5); ctx.fill();
+          if (imgPaper && imgPaper.complete && imgPaper.naturalWidth > 0) {
+            const iw = imgPaper.naturalWidth, ih = imgPaper.naturalHeight;
+            ctx.save();
+            rrect(px, py, pw, ph, 2.5); ctx.clip();
+            // Recorte exacto a la tarjeta del paper dentro de la lámina
+            ctx.drawImage(imgPaper, iw * .185, ih * .115, iw * .63, ih * .77, px, py, pw, ph);
+            ctx.restore();
+          }
+          ctx.strokeStyle = kCit > .2 ? C.accent : C.accent2;
+          ctx.lineWidth = kCit > .2 ? 1.2 : .75;
+          rrect(px, py, pw, ph, 2.5); ctx.stroke();
+          ctx.restore();
+
+          if (kCit > 0) {
+            // Destello dorado alrededor del documento y sello de impacto cuando menciona las +100 citas
+            ctx.save();
+            ctx.strokeStyle = rgba(C.accent, .45 * kCit);
+            ctx.lineWidth = 2.6;
+            rrect(px - 1.5, py - 1.5, pw + 3, ph + 3, 3.5); ctx.stroke();
+            ctx.restore();
+            check(px + pw - 2, py + 1, A.s * .048 * pop(t, F.at('supera')), kCit);
+          }
+        }
+        scrim(.62);
+      }
+    },
+
+    // ESCENA 7: Jueves bajo las estrellas en la cúpula del OAN, retrato de Castañeda y la geometría del cielo
+    {
+      alt: 'Sobre la cúpula histórica del Observatorio Astronómico Nacional se curva una bóveda estrellada. El retrato de Leonardo Castañeda y el frasco vacío acompañan a quienes miran al cielo.',
+      cam: F => [
+        [0, 0, 8, 1.15],
+        [F.at('estrellas') + .3, 0, 0, 1],
+        [F.at('presencia') + .4, 0, -2, .98]
+      ],
+      draw(t, F) {
+        const A = F.area;
+        const baseY = A.y0 + A.h * .78;
+
+        // Cielo estrellado y malla curva del espacio-tiempo arriba (cierra el círculo con las escenas 1 y 4)
+        cosmosBg(F, F.g, 1);
+        const kGeo = easeIO(seg(t, F.at('geometria') - .3, F.at('presencia') + .4));
+
+        // Arcos geodésicos curvos en el cielo sobre la cúpula del OAN
+        for (let i = 1; i <= 4; i++) {
+          const rad = A.s * (.20 + i * .12);
+          ctx.save();
+          ctx.strokeStyle = i % 2 === 0 ? C.accent : C.accent2;
+          ctx.lineWidth = .7 + .3 * kGeo;
+          ctx.globalAlpha = .35 + .45 * kGeo;
+          if (i % 2 === 1) ctx.setLineDash([3, 2]);
+          ctx.beginPath();
+          ctx.arc(A.cx, baseY - A.s * .18, rad, Math.PI * 1.1, Math.PI * 1.9);
+          ctx.stroke();
+          ctx.restore();
+        }
+
+        // Cúpula histórica del OAN en la base
+        oanObservatory(F, baseY, 1);
+
+        // Medallón con el retrato de Leonardo Castañeda a la izquierda y el frasco a la derecha
+        const kPor = ease(seg(t, 0, .6));
+        castanedaMedal(A.cx - A.w * .27, A.y0 + A.h * .44, A.s * .125 * kPor, 1, kGeo);
+
+        const kJar = ease(seg(t, F.at('frasco') - .3, F.at('frasco') + .3));
+        if (kJar > 0) {
+          darkMatterJar(A.cx + A.w * .27, A.y0 + A.h * .44, A.s * .105 * kJar, .92);
+        }
+
+        // Ciudadanos y estudiantes junto al observatorio en "Jueves bajo las estrellas"
+        const fh = A.s * .13;
+        figureFull(A.cx - A.w * .26, baseY, fh, C.ink, kPor, .6);
+        figureFull(A.cx + A.w * .26, baseY, fh * .86, C.accent2, kPor, .6);
+
+        // Lámpara/destello sobre la cúpula cuando la geometría delata la presencia del cosmos
+        if (kGeo > 0) {
+          bulb(A.cx, A.y0 + A.h * .24, A.s * .055 * pop(t, F.at('delata')), kGeo, kGeo);
+        }
+        scrim(.62);
+      }
+    }
+  ];
+
+  // ================= 10. Motor: tiempos =================
+  const norm = s => String(s).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]/g, '');
+  const N = SCENES.length;
+  function estimate(text) {
+    const words = [];
+    let t = .25;
+    for (const raw of text.split(/\s+/).filter(Boolean)) {
+      const m = raw.match(/^(.*?)([.,:;!?…]*)$/);
+      const core = m[1].replace(/^[¿¡"«(]+|[")»]+$/g, '');
+      const spoken = SAY[core] || core;
+      const letters = spoken.replace(/[^a-záéíóúñü0-9]/gi, '').length;
+      const d = clamp(.1 + letters * .038, .16, 1) * CONFIG.ritmo;
+      words.push({ w: raw, s: t, e: t + d });
+      t += d + (/[.!?…]/.test(m[2]) ? .38 : /[:;]/.test(m[2]) ? .24 : /,/.test(m[2]) ? .17 : .02) * CONFIG.ritmo;
+    }
+    return { words, dur: t + CONFIG.cola };
+  }
+  function chunks(words) {
+    const out = [];
+    let cur = [];
+    words.forEach((w, i) => {
+      cur.push(i);
+      const len = cur.map(j => words[j].w).join(' ').length;
+      if (cur.length >= FMT.maxPal || len >= FMT.maxCar || /[.,:;!?…]$/.test(w.w)) { out.push(cur); cur = []; }
+    });
+    if (cur.length) out.push(cur);
+    return out.map(ids => ({ ids, s: words[ids[0]].s }));
+  }
+  function makeAt(s) {
+    const cache = new Map();
+    return (q, n = 1) => {
+      const key = q + '#' + n;
+      if (cache.has(key)) return cache.get(key);
+      const parts = String(q).split(/\s+/).map(norm).filter(Boolean);
+      let hits = 0, res = null;
+      for (let i = 0; i + parts.length <= s.words.length && res === null; i++) {
+        if (parts.every((p, k) => norm(s.words[i + k].w).startsWith(p)) && ++hits === n) res = s.words[i].s;
+      }
+      if (res === null) { console.warn(`at("${q}") no aparece en la escena ${s.i + 1}: "${s.text.slice(0, 50)}…"`); res = 0; }
+      cache.set(key, res);
+      return res;
+    };
+  }
+  const count = s => s.split(/\s+/).filter(Boolean).length;
+  const useWords = WORDS.length > 0 && WORDS.length === SCRIPT.reduce((a, s) => a + count(s), 0);
+  if (WORDS.length && !useWords) console.warn('WORDS no tiene la misma cantidad de palabras que SCRIPT. Uso tiempos estimados.');
+  if (useWords) {
+    let wi = 0;
+    const ranges = SCRIPT.map(s => { const r = [wi, wi + count(s)]; wi = r[1]; return r; });
+    const starts = ranges.map(([a], i) => i ? Math.max(0, WORDS[a][1] - .08) : 0);
+    SCENES.forEach((s, i) => {
+      const [a, b] = ranges[i];
+      s.start = starts[i];
+      s.dur = (i < N - 1 ? starts[i + 1] : WORDS[b - 1][2] + CONFIG.cola) - s.start;
+      s.words = WORDS.slice(a, b).map(([w, ws, we]) => ({ w, s: ws - s.start, e: we - s.start }));
+    });
+  } else {
+    let acc = 0;
+    SCENES.forEach((s, i) => { const e = estimate(SCRIPT[i]); s.words = e.words; s.dur = e.dur; s.start = acc; acc += s.dur; });
+  }
+  SCENES.forEach((s, i) => { s.i = i; s.text = SCRIPT[i]; s.chunks = chunks(s.words); s.at = makeAt(s); });
+  const TOTAL = SCENES[N - 1].start + SCENES[N - 1].dur;
+  document.getElementById('total').textContent = Math.round(TOTAL);
+
+  // ================= 11. Motor: interfaz =================
+  const barsEl = document.getElementById('bars');
+  barsEl.innerHTML = SCENES.map(() => '<span><i></i></span>').join('');
+  const fills = [...barsEl.querySelectorAll('i')];
+  const scriptEl = document.getElementById('script');
+  scriptEl.innerHTML = SCENES.map((s, i) => `<li><button class="blk" type="button" data-i="${i}"><span class="n">${String(i + 1).padStart(2, '0')}</span><span>${s.text}</span></button></li>`).join('');
+  const blks = [...scriptEl.querySelectorAll('.blk')];
+  blks.forEach(b => b.addEventListener('click', () => { nav(+b.dataset.i); closeSheet(); }));
+  if (CONFIG.subtitulos === 'karaoke') subsEl.classList.add('karaoke');
+
+  const audio = document.getElementById('voz');
+  const hasAudio = !!AUDIO_SRC && !!audio && typeof audio.play === 'function';
+  if (hasAudio) audio.src = AUDIO_SRC;
+
+  let T = 0, idx = -1, playing = !reduce && !hasAudio && !RENDER, ended = false, clean = false, bare = false, last = performance.now();
+  let chunkIdx = -1, wordEls = [];
+  const sceneAt = t => { let i = N - 1; while (i > 0 && SCENES[i].start > t) i--; return i; };
+
+  function enter(i) {
+    idx = i; chunkIdx = -1;
+    subsEl.classList.remove('full');
+    cv.setAttribute('aria-label', SCENES[i].alt);
+    blks.forEach((b, j) => j === i ? b.setAttribute('aria-current', 'step') : b.removeAttribute('aria-current'));
+  }
+  function renderSubs(s, lt) {
+    const hide = CONFIG.subtitulos === 'no' || s.noSubs;
+    subsEl.style.visibility = hide ? 'hidden' : '';
+    if (hide) return;
+    if (reduce) {
+      if (chunkIdx !== 0) { subsEl.textContent = s.text; subsEl.classList.add('full'); chunkIdx = 0; }
+      return;
+    }
+    let ci = 0;
+    for (let i = 0; i < s.chunks.length; i++) if (s.chunks[i].s <= lt + .03) ci = i;
+    if (ci !== chunkIdx) {
+      chunkIdx = ci;
+      subsEl.innerHTML = s.chunks[ci].ids.map(j => `<span class="w">${s.words[j].w}</span>`).join(' ');
+      wordEls = [...subsEl.children];
+      subsEl.classList.remove('pop'); void subsEl.offsetWidth; subsEl.classList.add('pop');
+    }
+    let cur = -1;
+    s.chunks[ci].ids.forEach((j, k) => { if (s.words[j].s <= lt + .03) cur = k; });
+    wordEls.forEach((el, k) => el.classList.toggle('now', k === cur));
+  }
+  function paint() {
+    const i = sceneAt(T), s = SCENES[i];
+    if (i !== idx) enter(i);
+    const lt = reduce ? s.dur - .01 : T - s.start;
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    ctx.clearRect(0, 0, W, H);
+    bleed(C.bg);
+    const F = Object.assign(frameInfo(), { g: reduce ? s.start : T, dur: s.dur, at: s.at, words: s.words });
+    const keys = typeof s.cam === 'function' ? s.cam(F) : s.cam;
+    beginWorld(keys ? track(lt, keys) : { x: 0, y: 0, z: 1 });
+    s.draw(lt, F);
+    ctx.restore();
+    ctx.globalAlpha = 1;
+    renderSubs(s, lt);
+    fills.forEach((el, j) => el.style.setProperty('--p', j < i ? 1 : j > i ? 0 : clamp((T - s.start) / s.dur)));
+  }
+  function syncUI() {
+    document.getElementById('pz').hidden = playing || ended;
+    document.getElementById('replay').hidden = !ended;
+  }
+  function seek(t) {
+    T = clamp(t, 0, TOTAL - 1e-3); ended = false;
+    if (hasAudio) { try { audio.currentTime = T; } catch (e) { /* audio sin cargar */ } }
+  }
+  function play() {
+    playing = true; ended = false;
+    if (hasAudio) { try { audio.currentTime = T; } catch (e) { /* audio sin cargar */ } audio.play().catch(() => {}); }
+    syncUI();
+  }
+  function pause() { playing = false; if (hasAudio) audio.pause(); syncUI(); }
+  function nav(i) { seek(SCENES[clamp(i, 0, N - 1)].start + 1e-3); play(); }
+  function toggle() { if (ended) { seek(0); play(); } else if (playing) pause(); else play(); }
+  function finish() { T = TOTAL - 1e-3; pause(); ended = true; syncUI(); }
+  function setClean(v) { clean = v; frameEl.classList.toggle('clean', v); }
+  const bareSw = document.getElementById('bareSw');
+  function setBare(v) { bare = v; frameEl.classList.toggle('bare', v); bareSw.setAttribute('aria-checked', String(!v)); }
+  bareSw.addEventListener('click', () => setBare(!bare));
+
+  const taps = document.getElementById('taps');
+  let lpTimer = null, lpFired = false;
+  taps.addEventListener('pointerdown', () => {
+    lpFired = false;
+    clearTimeout(lpTimer);
+    lpTimer = setTimeout(() => { lpFired = true; if (clean) setClean(false); }, 700);
+  });
+  taps.addEventListener('pointerup', e => {
+    clearTimeout(lpTimer);
+    if (lpFired) return;
+    const r = taps.getBoundingClientRect(), x = (e.clientX - r.left) / r.width;
+    if (x < .3) nav(idx - 1);
+    else if (x > .7) { if (idx === N - 1) finish(); else nav(idx + 1); }
+    else toggle();
+  });
+  taps.addEventListener('pointercancel', () => clearTimeout(lpTimer));
+  taps.addEventListener('contextmenu', e => e.preventDefault());
+  document.getElementById('replay').addEventListener('click', () => { seek(0); play(); });
+
+  const aside = document.getElementById('aside');
+  let wasPlaying = false;
+  function openSheet() { wasPlaying = playing; pause(); aside.classList.add('open'); document.getElementById('close').focus(); }
+  function closeSheet() {
+    if (!aside.classList.contains('open')) return;
+    aside.classList.remove('open');
+    if (wasPlaying && !ended) play();
+  }
+  document.getElementById('info').addEventListener('click', openSheet);
+  document.getElementById('close').addEventListener('click', closeSheet);
+  document.getElementById('restart').addEventListener('click', () => { closeSheet(); nav(0); });
+  document.getElementById('rec').addEventListener('click', () => { closeSheet(); setClean(true); nav(0); frameEl.focus(); });
+
+  document.addEventListener('keydown', e => {
+    if (e.target.closest && e.target.closest('input,textarea,select')) return;
+    if (e.key === 'ArrowRight') { e.preventDefault(); nav(idx + 1); }
+    else if (e.key === 'ArrowLeft') { e.preventDefault(); nav(idx - 1); }
+    else if (e.key === ' ' && !(e.target instanceof HTMLButtonElement)) { e.preventDefault(); toggle(); }
+    else if (e.key === 'h' || e.key === 'H') setClean(!clean);
+    else if (e.key === 's' || e.key === 'S') setBare(!bare);
+    else if (e.key === 'r' || e.key === 'R') nav(0);
+    else if (e.key === 'Escape') closeSheet();
+  });
+
+  function frame(now) {
+    const dt = Math.min(.05, (now - last) / 1000);
+    last = now;
+    if (playing) {
+      if (hasAudio && !audio.paused) T = audio.currentTime; else T += dt;
+      if (T >= TOTAL) finish();
+    }
+    paint();
+    requestAnimationFrame(frame);
+  }
+
+  // ================= 12. Contrato de render =================
+  window.__duration = TOTAL;
+  window.__aspect = FMT.ar;
+  window.__escenas = SCENES.map(s => ({ inicio: +s.start.toFixed(3), dur: +s.dur.toFixed(3), texto: s.text }));
+  window.renderAt = t => { playing = false; T = clamp(t, 0, TOTAL - 1e-3); paint(); };
+
+  new ResizeObserver(resize).observe(frameEl);
+  resize();
+  enter(0);
+  syncUI();
+  ready = true;
+  if (RENDER) {
+    setClean(true);
+    frameEl.classList.add('frozen');
+    if (Q.has('bare')) setBare(true);
+    window.renderAt(parseFloat(Q.get('t')) || 0);
+    if (document.fonts) document.fonts.ready.then(() => window.renderAt(parseFloat(Q.get('t')) || 0));
+  } else {
+    paint();
+    requestAnimationFrame(frame);
+  }
+})();
+</script>
+</body>
+</html>

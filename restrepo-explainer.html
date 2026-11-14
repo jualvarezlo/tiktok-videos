@@ -1,0 +1,1198 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Diego Restrepo: masa de neutrinos y materia oscura desde la UdeA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,300..800&family=JetBrains+Mono:wght@400;600&display=block">
+<style>
+/* Estilo visual: Noche (references/estilos.md) */
+:root{
+  --bg:#0A0E1F;
+  --panel:#11172E;
+  --panel-2:#182042;
+  --line:#27305A;
+  --glass:rgba(10,14,31,.82);
+  --ink:#F2F3FA;
+  --muted:#8F97BF;
+  --accent:#FFB454;
+  --accent-2:#6FB6FF;
+  --ok:#7EDDB3;
+  --warn:#FF7A6B;
+  --sub-ink:#FFFFFF;
+  --sub-edge:#0A0E1F;
+  --track:rgba(255,255,255,.22);
+  --display:"Bricolage Grotesque","Avenir Next Condensed","Arial Narrow",system-ui,sans-serif;
+  --body:"Atkinson Hyperlegible","Segoe UI",system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--bg)}
+body{color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+a{color:var(--accent-2);text-underline-offset:3px}
+
+/* Formatos: proporción y zona de subtítulos. El motor marca el formato en <body data-formato>. */
+body{--arw:9;--arh:16;--maxw:495px;--subs-top:65.5%;--subs-side:9%;--subs-size:7.6cqmin}
+body[data-formato="16:9"]{--arw:16;--arh:9;--maxw:1280px;--subs-top:79%;--subs-side:12%;--subs-size:5.6cqmin}
+body[data-formato="1:1"]{--arw:1;--arh:1;--maxw:760px;--subs-top:75%;--subs-side:8%;--subs-size:6.4cqmin}
+body[data-formato="4:5"]{--arw:4;--arh:5;--maxw:680px;--subs-top:72%;--subs-side:8%;--subs-size:6.8cqmin}
+
+.app{min-height:100%;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:32px 40px;padding:24px 16px}
+
+/* Cuadro */
+.frame{position:relative;container-type:size;flex:none;aspect-ratio:var(--arw)/var(--arh);width:min(100%,calc((100vh - 48px) * var(--arw) / var(--arh)),var(--maxw));
+  border:1px solid var(--line);border-radius:24px;overflow:hidden;background:var(--bg);
+  -webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.frame canvas{position:absolute;inset:0;width:100%;height:100%;display:block;z-index:1}
+
+.topbar{position:absolute;left:0;right:0;top:0;z-index:6;padding:2.6cqmin 4cqmin 0;display:flex;flex-direction:column;gap:2.6cqmin;pointer-events:none}
+.bars{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:1.2cqmin}
+.bars span{position:relative;display:block;height:3px;border-radius:2px;background:var(--track);overflow:hidden}
+.bars i{position:absolute;inset:0;transform-origin:left;transform:scaleX(var(--p,0));background:var(--ink)}
+.toprow{display:flex;justify-content:flex-end}
+.info{pointer-events:auto;width:9cqmin;height:9cqmin;border-radius:50%;border:1px solid var(--line);background:var(--glass);color:var(--ink);display:grid;place-items:center;cursor:pointer;padding:0;font:600 4cqmin/1 var(--mono)}
+@media (min-width:980px){.info{display:none}}
+
+/* Subtítulos */
+.subs{position:absolute;left:var(--subs-side);right:var(--subs-side);top:var(--subs-top);z-index:4;pointer-events:none;text-align:center;text-wrap:balance;
+  font-family:var(--display);font-weight:800;font-stretch:88%;font-size:var(--subs-size);line-height:1.1;letter-spacing:-.01em;color:var(--sub-ink);
+  text-shadow:0 0 .14em var(--sub-edge),.06em .06em 0 var(--sub-edge),-.06em .06em 0 var(--sub-edge),.06em -.06em 0 var(--sub-edge),-.06em -.06em 0 var(--sub-edge),0 .08em 0 var(--sub-edge),0 -.08em 0 var(--sub-edge),.08em 0 0 var(--sub-edge),-.08em 0 0 var(--sub-edge)}
+.subs .w{display:inline-block;margin-inline:.05em;transition:transform .12s ease,color .12s ease}
+.subs.karaoke .w.now{color:var(--accent);transform:scale(1.06)}
+.subs.pop{animation:pop .2s ease-out}
+.subs.full{font-size:calc(var(--subs-size) * .66)}
+@keyframes pop{from{transform:scale(.94);opacity:.4}to{transform:none;opacity:1}}
+
+/* Toques y estados */
+.taps{position:absolute;inset:0;z-index:5;cursor:pointer;touch-action:manipulation}
+.pz{position:absolute;left:50%;top:42%;z-index:5;width:17cqmin;height:17cqmin;transform:translate(-50%,-50%);border-radius:50%;background:var(--glass);border:1px solid var(--line);display:grid;place-items:center;pointer-events:none}
+.pz svg{width:7cqmin;height:7cqmin;fill:var(--ink);margin-left:1cqmin}
+.replay{position:absolute;left:50%;top:42%;z-index:7;transform:translate(-50%,-50%);display:inline-flex;align-items:center;gap:2cqmin;padding:3cqmin 5cqmin;border-radius:99px;border:0;background:var(--accent);color:var(--bg);font:700 4cqmin/1 var(--body);cursor:pointer}
+.frame.clean .topbar,.frame.clean .pz,.frame.clean .replay{display:none}
+.frame.bare .subs,.frame.bare .bars{visibility:hidden}
+.frame.frozen .subs,.frame.frozen .subs .w{animation:none!important;transition:none!important}
+.frame:focus-visible,.info:focus-visible,.replay:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+
+/* Panel */
+.aside{width:340px;max-height:min(calc(100vh - 48px),880px);overflow:auto;display:flex;flex-direction:column;gap:22px;padding-right:6px}
+.aside h1{margin:0;font-family:var(--display);font-weight:800;font-stretch:80%;font-size:30px;line-height:1;letter-spacing:-.01em;text-wrap:balance}
+.aside h2{margin:0 0 8px;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+.aside p{margin:0;color:var(--muted)}
+.aside ul{margin:0;padding-left:1.1em;color:var(--muted);display:flex;flex-direction:column;gap:5px}
+.actions{display:flex;flex-wrap:wrap;gap:8px}
+.act{appearance:none;border:1px solid var(--line);background:var(--panel-2);color:var(--ink);border-radius:99px;padding:9px 16px;font:700 14px/1 var(--body);cursor:pointer}
+.act.primary{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+.switch{appearance:none;display:inline-flex;align-items:center;gap:10px;align-self:flex-start;border:0;background:none;padding:2px 0;color:var(--ink);font:700 14px/1 var(--body);cursor:pointer}
+.switch .knob{position:relative;flex:none;width:38px;height:22px;border-radius:99px;background:var(--panel-2);border:1px solid var(--line);transition:background .15s ease}
+.switch .knob::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:var(--muted);transition:transform .15s ease,background .15s ease}
+.switch[aria-checked="true"] .knob{background:var(--accent);border-color:var(--accent)}
+.switch[aria-checked="true"] .knob::after{transform:translateX(16px);background:var(--bg)}
+.act:focus-visible,.blk:focus-visible,.close:focus-visible,.switch:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.script{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.blk{appearance:none;width:100%;text-align:left;display:grid;grid-template-columns:28px minmax(0,1fr);gap:8px;padding:9px 10px;border:1px solid transparent;border-radius:10px;background:none;color:var(--muted);font:400 14px/1.45 var(--body);cursor:pointer}
+.blk .n{font-family:var(--mono);font-size:12px;padding-top:2px;color:var(--muted)}
+.blk:hover{border-color:var(--line)}
+.blk[aria-current="step"]{background:var(--panel-2);border-color:var(--line);color:var(--ink)}
+.blk[aria-current="step"] .n{color:var(--accent)}
+.sheet-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.close{display:none;appearance:none;border:1px solid var(--line);background:var(--panel-2);color:var(--ink);border-radius:99px;padding:8px 14px;font:700 14px/1 var(--body);cursor:pointer}
+
+@media (min-width:980px){
+  body[data-formato="16:9"] .aside{display:block;width:min(100%,1280px);max-height:none;overflow:visible;columns:300px 3;column-gap:36px;padding-right:0}
+  body[data-formato="16:9"] .aside>*{break-inside:avoid;margin-bottom:22px}
+}
+@media (max-width:979px){
+  .aside{position:fixed;inset:0;z-index:20;width:auto;max-height:none;padding-inline:20px;padding-block:calc(env(safe-area-inset-top,0px) + 20px) calc(env(safe-area-inset-bottom,0px) + 28px);background:var(--bg);transform:translateY(102%);transition:transform .3s ease;visibility:hidden}
+  .aside.open{transform:none;visibility:visible}
+  .close{display:inline-block}
+}
+@media (max-width:699px){
+  .app{padding:0}
+  .frame{width:100%;border:0;border-radius:0}
+  body[data-formato="9:16"] .app{display:block;height:100%;min-height:0}
+  body[data-formato="9:16"] .frame{height:100%;aspect-ratio:auto}
+}
+body.render .app{display:block;height:100%;min-height:0;padding:0}
+body.render .frame{width:100vw;height:100vh;aspect-ratio:auto;border:0;border-radius:0}
+body.render .aside{display:none}
+@media (prefers-reduced-motion:reduce){
+  .subs.pop{animation:none}
+  .subs .w,.aside,.switch .knob,.switch .knob::after{transition:none}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="frame" id="frame" tabindex="0" aria-label="Explainer animado. Flechas: cambiar de escena. Espacio: pausa.">
+    <canvas id="cv" role="img" aria-label=""></canvas>
+    <div class="subs" id="subs" aria-live="off"></div>
+    <div class="taps" id="taps"></div>
+    <div class="pz" id="pz" hidden><svg viewBox="0 0 24 24"><path d="M7 4v16l13-8z"/></svg></div>
+    <button class="replay" id="replay" type="button" hidden>↻ Ver de nuevo</button>
+    <div class="topbar">
+      <div class="bars" id="bars"></div>
+      <div class="toprow">
+        <button class="info" id="info" type="button" aria-label="Abrir guion y opciones">i</button>
+      </div>
+    </div>
+  </div>
+  <!-- Voz grabada opcional: el motor la usa como reloj. Ver AUDIO_SRC en el script. -->
+  <audio id="voz" preload="auto"></audio>
+  <!-- Activos reales de recursos-externos precargados para el lienzo 2D -->
+  <div hidden aria-hidden="true">
+    <img id="img-restrepo" src="recursos-externos/02_assets/graficos/retrato_diego_restrepo_cutout.png" alt="">
+    <img id="img-sello-udea" src="recursos-externos/02_assets/graficos/sello_institucional_udea.png" alt="">
+    <img id="img-tesis" src="recursos-externos/02_assets/graficos/portada_tesis_restrepo_2001.jpg" alt="">
+    <img id="img-paper" src="recursos-externos/02_assets/graficos/paper_escotogenico_restrepo.jpg" alt="">
+    <img id="img-sello-a1" src="recursos-externos/02_assets/graficos/sello_minciencias_a1.png" alt="">
+    <img id="img-mural" src="recursos-externos/02_assets/graficos/mural_cuatro_cientificos_beat77.jpg" alt="">
+  </div>
+
+  <aside class="aside" id="aside" aria-label="Guion y opciones">
+    <div class="sheet-head">
+      <h1>Diego Restrepo: masa de neutrinos y materia oscura desde la UdeA</h1>
+      <button class="close" id="close" type="button">Cerrar</button>
+    </div>
+    <p>Explainer animado. Dura <span id="total">80</span> segundos.</p>
+    <div class="actions">
+      <button class="act" id="restart" type="button">Reiniciar</button>
+      <button class="act primary" id="rec" type="button">Modo grabación</button>
+    </div>
+    <p>Modo grabación oculta los controles y arranca de cero. Para salir, mantén presionada la pantalla o toca H.</p>
+    <button class="switch" id="bareSw" type="button" role="switch" aria-checked="true"><span class="knob" aria-hidden="true"></span>Subtítulos y barras</button>
+    <p>El interruptor muestra u oculta los subtítulos y las barras de arriba. Funciona también en modo grabación. Atajo: S.</p>
+    <div>
+      <h2>Guion</h2>
+      <ol class="script" id="script"></ol>
+    </div>
+    <div>
+      <h2>Cómo se usa</h2>
+      <p>Toca a la derecha para avanzar. Toca a la izquierda para volver. Toca al centro para pausar. Flechas, espacio, R para reiniciar.</p>
+    </div>
+    <div>
+      <h2>Qué es ilustración</h2>
+      <ul>
+        <li>El lazo cuántico escotogénico representa un diagrama de Feynman a un lazo donde estados virtuales del sector oscuro generan radiativamente el término de masa de Majorana de los neutrinos sin violar la conservación de energía en promedios observables.</li>
+        <li>La grieta en el bloque del Modelo Estándar simboliza que las oscilaciones de neutrinos exigen nueva física más allá de la formulación original sin masa.</li>
+        <li>El tiempo de los subtítulos es una estimación de lectura en voz alta.</li>
+      </ul>
+    </div>
+    <div>
+      <h2>Fuentes</h2>
+      <ul>
+        <li><a href="https://orcid.org/0000-0001-6455-5564" target="_blank" rel="noopener">ORCID del Dr. Diego Alejandro Restrepo Quintero — Instituto de Física, Universidad de Antioquia</a></li>
+        <li><a href="https://arxiv.org/abs/1308.3655" target="_blank" rel="noopener">D. Restrepo, O. Zapata, C. E. Yaguna (2013): Models with radiative neutrino masses and viable dark matter candidates (JHEP 11, 011)</a></li>
+        <li><a href="https://arxiv.org/abs/0808.3340" target="_blank" rel="noopener">D. Aristizabal Sierra, J. Kubo, D. Restrepo, D. Suematsu, O. Zapata (2009): Radiative seesaw: Warm dark matter, collider and lepton flavour violating signals (Phys. Rev. D 79, 013011)</a></li>
+      </ul>
+    </div>
+  </aside>
+</div>
+
+<script>
+(() => {
+  // ================= 1. Configuración =================
+  const CONFIG = {
+    formato: '9:16',
+    subtitulos: 'karaoke',
+    cola: .6,
+    ritmo: .85
+  };
+
+  // ================= 2. Guion: un bloque por escena =================
+  const SCRIPT = [
+    'En este mismo segundo, cien billones de partículas fantasma nacidas en el Sol atraviesan tu cuerpo sin que sientas nada. Se llaman neutrinos y esconden la primera grieta real en nuestras leyes de la física.',
+    'Para explorar esa grieta desde Medellín, el físico Diego Restrepo estudió en la Universidad de Antioquia, se doctoró en el Instituto de Física Corpuscular de Valencia en dos mil uno y regresó para liderar la física teórica desde la universidad pública.',
+    'Durante décadas el Modelo Estándar afirmó que los neutrinos no tenían masa. Pero al viajar por el espacio cambian de identidad como un camaleón, un fenómeno llamado oscilación que solo es posible si realmente pesan algo.',
+    'Aquí aparecen dos acertijos gigantescos: por qué los neutrinos tienen una masa tan diminuta y de qué está hecha la materia oscura del cosmos. En vez de tratarlos por separado, Restrepo buscó una sola llave para abrir los dos candados.',
+    'Esa llave se llama mecanismo escotogénico, que significa creado por la oscuridad. Como el neutrino no adquiere peso de forma directa, lo gana al dar un rodeo cuántico a través de partículas ocultas de materia oscura.',
+    'En dos mil trece, junto a Óscar Zapata y Carlos Yaguna, Restrepo clasificó treinta y cinco modelos donde la materia oscura explica exactamente la masa de los neutrinos, un artículo que ya supera las ciento cuarenta citas científicas.',
+    'Hoy, desde el grupo GFIF con máxima categoría en MinCiencias y sus charlas en Medellín, Diego Restrepo demuestra que la partícula más esquiva y el universo oscuro pueden ser dos caras de la misma historia.'
+  ];
+
+  const SAY = {
+    'GFIF': 'gefif',
+    'MinCiencias': 'minciencias',
+    'Yaguna': 'yaguna'
+  };
+
+  const WORDS = [];
+  const AUDIO_SRC = '';
+
+  // ================= 3. Formatos =================
+  const FORMATS = {
+    '9:16': { ar: [9, 16], foco: .40, accion: [.08, .62], subs: [.655, .82], maxPal: 4, maxCar: 20 },
+    '16:9': { ar: [16, 9], foco: .44, accion: [.07, .74], subs: [.79, .92], maxPal: 7, maxCar: 38 },
+    '1:1': { ar: [1, 1], foco: .42, accion: [.07, .70], subs: [.75, .90], maxPal: 5, maxCar: 26 },
+    '4:5': { ar: [4, 5], foco: .41, accion: [.07, .68], subs: [.72, .88], maxPal: 5, maxCar: 24 }
+  };
+  const Q = new URLSearchParams(typeof location !== 'undefined' ? location.search : '');
+  const FMT_ID = FORMATS[Q.get('formato')] ? Q.get('formato') : CONFIG.formato;
+  const FMT = FORMATS[FMT_ID];
+  const RENDER = Q.has('render') || Q.has('t');
+  document.body.dataset.formato = FMT_ID;
+  if (RENDER) document.body.classList.add('render');
+
+  // ================= 4. Tokens y utilidades =================
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const rootCS = getComputedStyle(document.documentElement);
+  const tok = n => rootCS.getPropertyValue(n).trim();
+  const C = {
+    bg: tok('--bg'), panel: tok('--panel'), line: tok('--line'), ink: tok('--ink'), muted: tok('--muted'),
+    accent: tok('--accent'), accent2: tok('--accent-2'), ok: tok('--ok'), warn: tok('--warn')
+  };
+  const FONT = { display: tok('--display'), body: tok('--body'), mono: tok('--mono') };
+
+  const TAU = Math.PI * 2;
+  const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+  const seg = (t, a, b) => clamp((t - a) / (b - a));
+  const lerp = (a, b, k) => a + (b - a) * k;
+  const ease = x => 1 - Math.pow(1 - x, 3);
+  const easeIO = x => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+  const q4 = x => x < .5 ? 8 * x ** 4 : 1 - Math.pow(-2 * x + 2, 4) / 2;
+  const pop = (t, a, d = .35) => { const k = seg(t, a, a + d); return k <= 0 ? 0 : k >= 1 ? 1 : ease(k) * (1 + .18 * Math.sin(k * Math.PI)); };
+  function hexRGB(hex) {
+    let h = hex.replace('#', '');
+    if (h.length === 3) h = h.split('').map(c => c + c).join('');
+    const n = parseInt(h, 16);
+    return [n >> 16 & 255, n >> 8 & 255, n & 255];
+  }
+  const rgba = (hex, a) => { const [r, g, b] = hexRGB(hex); return `rgba(${r},${g},${b},${a})`; };
+  const mix = (h1, h2, k) => { const a = hexRGB(h1), b = hexRGB(h2); return `rgb(${a.map((v, i) => Math.round(lerp(v, b[i], k))).join(',')})`; };
+  function rng(seed) {
+    return () => {
+      seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+      let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+      t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  }
+
+  // ================= 5. Lienzo, mundo y cámara =================
+  const frameEl = document.getElementById('frame');
+  const cv = document.getElementById('cv');
+  const ctx = cv.getContext('2d');
+  const subsEl = document.getElementById('subs');
+  let W = 1, H = 1, DPR = 1, ready = false;
+  function resize() {
+    const r = frameEl.getBoundingClientRect();
+    DPR = Math.min(3, window.devicePixelRatio || 1);
+    W = Math.max(1, r.width); H = Math.max(1, r.height);
+    cv.width = Math.round(W * DPR); cv.height = Math.round(H * DPR);
+    if (ready) paint();
+  }
+
+  function frameInfo() {
+    const u = Math.min(W, H) / 100, Y = f => (f - FMT.foco) * H / u;
+    const left = -W / 2 / u, right = W / 2 / u, pad = 4;
+    const x0 = left + pad, x1 = right - pad, y0 = Y(FMT.accion[0]), y1 = Y(FMT.accion[1]);
+    return {
+      w: W / u, h: H / u, left, right, top: Y(0), bottom: Y(1), subsTop: Y(FMT.subs[0]), subsBottom: Y(FMT.subs[1]),
+      area: { x0, x1, y0, y1, w: x1 - x0, h: y1 - y0, cx: (x0 + x1) / 2, cy: (y0 + y1) / 2, s: Math.min(x1 - x0, y1 - y0) },
+      vertical: H > W * 1.2, horizontal: W > H * 1.2, formato: FMT_ID
+    };
+  }
+  function track(t, K) {
+    if (t <= K[0][0]) return { x: K[0][1], y: K[0][2], z: K[0][3] };
+    for (let i = 0; i < K.length - 1; i++) {
+      const a = K[i], b = K[i + 1];
+      if (t < b[0]) { const k = q4(seg(t, a[0], b[0])); return { x: lerp(a[1], b[1], k), y: lerp(a[2], b[2], k), z: a[3] * Math.pow(b[3] / a[3], k) }; }
+    }
+    const l = K[K.length - 1];
+    return { x: l[1], y: l[2], z: l[3] };
+  }
+  function beginWorld(cam) {
+    const u = Math.min(W, H) / 100 * cam.z;
+    ctx.save();
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    ctx.translate(W / 2, H * FMT.foco); ctx.scale(u, u); ctx.translate(-cam.x, -cam.y);
+  }
+  function bleed(fill, a = 1) {
+    if (a <= 0) return;
+    ctx.save(); ctx.setTransform(DPR, 0, 0, DPR, 0, 0); ctx.globalAlpha = a;
+    if (Array.isArray(fill)) { const gr = ctx.createLinearGradient(0, 0, 0, H); gr.addColorStop(0, fill[0]); gr.addColorStop(1, fill[1]); ctx.fillStyle = gr; }
+    else ctx.fillStyle = fill;
+    ctx.fillRect(0, 0, W, H); ctx.restore();
+  }
+  function scrim(a = .55) {
+    if (a <= 0 || CONFIG.subtitulos === 'no') return;
+    ctx.save(); ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    const y0 = H * FMT.accion[1], y1 = H * FMT.subs[0];
+    const gr = ctx.createLinearGradient(0, y0, 0, y1);
+    gr.addColorStop(0, rgba(C.bg, 0)); gr.addColorStop(1, rgba(C.bg, a));
+    ctx.fillStyle = gr; ctx.fillRect(0, y0, W, y1 - y0);
+    ctx.fillStyle = rgba(C.bg, a); ctx.fillRect(0, y1, W, H - y1);
+    ctx.restore();
+  }
+
+  // ================= 6. Ayudantes de dibujo (unidades de mundo) =================
+  function txt(s, x, y, o = {}) {
+    ctx.save();
+    ctx.font = `${o.w || 700} ${o.size || 5}px ${o.family || FONT.display}`;
+    ctx.fillStyle = o.color || C.ink; ctx.globalAlpha *= o.a ?? 1;
+    ctx.textAlign = o.align || 'center'; ctx.textBaseline = o.base || 'middle';
+    ctx.fillText(s, x, y); ctx.restore();
+  }
+  function line(x0, y0, x1, y1) { ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1, y1); ctx.stroke(); }
+  function rrect(x, y, w, h, r) { ctx.beginPath(); if (ctx.roundRect) ctx.roundRect(x, y, w, h, r); else ctx.rect(x, y, w, h); }
+  function dot(x, y, r, color, a = 1) { if (a <= 0 || r <= 0) return; ctx.save(); ctx.globalAlpha *= a; ctx.fillStyle = color; ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); ctx.fill(); ctx.restore(); }
+
+  // ================= 7. Íconos genéricos =================
+  function ring(x, y, r, a, color = C.accent, lw = .7) {
+    if (a <= 0 || r <= 0) return;
+    ctx.save(); ctx.globalAlpha *= a; ctx.strokeStyle = color; ctx.lineWidth = lw;
+    ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); ctx.stroke(); ctx.restore();
+  }
+  function brackets(x, y, s, a, color = C.accent) {
+    if (a <= 0) return;
+    const l = s * .3;
+    ctx.save(); ctx.globalAlpha *= a; ctx.strokeStyle = color; ctx.lineWidth = .7; ctx.lineCap = 'round';
+    ctx.beginPath();
+    for (const [sx, sy] of [[-1, -1], [1, -1], [1, 1], [-1, 1]]) { const px = x + sx * s, py = y + sy * s; ctx.moveTo(px, py - sy * l); ctx.lineTo(px, py); ctx.lineTo(px - sx * l, py); }
+    ctx.stroke(); ctx.restore();
+  }
+  function arrow(x0, y0, x1, y1, a, color = C.ink, lw = .7) {
+    if (a <= 0) return;
+    const ang = Math.atan2(y1 - y0, x1 - x0), h = Math.max(1.4, lw * 3);
+    ctx.save(); ctx.globalAlpha *= a; ctx.strokeStyle = color; ctx.lineWidth = lw; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    line(x0, y0, x1, y1);
+    ctx.beginPath(); ctx.moveTo(x1 - h * Math.cos(ang - .5), y1 - h * Math.sin(ang - .5)); ctx.lineTo(x1, y1); ctx.lineTo(x1 - h * Math.cos(ang + .5), y1 - h * Math.sin(ang + .5)); ctx.stroke();
+    ctx.restore();
+  }
+  function check(x, y, r, a) {
+    if (r <= 0 || a <= 0) return;
+    ctx.save(); ctx.globalAlpha *= a; ctx.fillStyle = C.ok; ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); ctx.fill();
+    ctx.strokeStyle = C.bg; ctx.lineWidth = r * .22; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    ctx.beginPath(); ctx.moveTo(x - r * .42, y + r * .02); ctx.lineTo(x - r * .1, y + r * .34); ctx.lineTo(x + r * .45, y - r * .3); ctx.stroke();
+    ctx.restore();
+  }
+  function cross(x, y, s, a, color = C.warn) {
+    if (a <= 0) return;
+    ctx.save(); ctx.globalAlpha *= a; ctx.strokeStyle = color; ctx.lineWidth = Math.max(.5, s * .25); ctx.lineCap = 'round';
+    line(x - s, y - s, x + s, y + s); line(x - s, y + s, x + s, y - s); ctx.restore();
+  }
+  function person(x, y, s, color = C.ink, a = 1) {
+    if (s <= 0 || a <= 0) return;
+    ctx.save(); ctx.globalAlpha *= a; ctx.fillStyle = color;
+    ctx.beginPath(); ctx.arc(x, y - s * .45, s * .32, 0, TAU); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(x, y + s * .42, s * .58, s * .45, 0, Math.PI, TAU); ctx.fill();
+    ctx.restore();
+  }
+  function lock(x, y, s, open = 0, color = C.accent, a = 1) {
+    if (s <= 0 || a <= 0) return;
+    ctx.save(); ctx.globalAlpha *= a;
+    ctx.strokeStyle = color; ctx.lineWidth = s * .18; ctx.lineCap = 'round';
+    const shY = y - s * (.35 + .22 * open);
+    ctx.beginPath(); ctx.arc(x, shY, s * .42, Math.PI, 0); ctx.stroke();
+    ctx.fillStyle = C.panel; ctx.strokeStyle = color; ctx.lineWidth = .85;
+    rrect(x - s * .65, y - s * .25, s * 1.3, s * 1.05, s * .2); ctx.fill(); ctx.stroke();
+    dot(x, y + s * .22, s * .15, color, 1);
+    ctx.restore();
+  }
+
+  // ================= 8. Dibujos y activos de este explainer =================
+  const imgRestrepo  = typeof document !== 'undefined' ? document.getElementById('img-restrepo') : null;
+  const imgSelloUdea = typeof document !== 'undefined' ? document.getElementById('img-sello-udea') : null;
+  const imgTesis     = typeof document !== 'undefined' ? document.getElementById('img-tesis') : null;
+  const imgPaper     = typeof document !== 'undefined' ? document.getElementById('img-paper') : null;
+  const imgSelloA1   = typeof document !== 'undefined' ? document.getElementById('img-sello-a1') : null;
+  const imgMural     = typeof document !== 'undefined' ? document.getElementById('img-mural') : null;
+
+  const STARS_BG = (() => {
+    const r = rng(2013);
+    return Array.from({ length: 110 }, () => ({ fx: r(), fy: r(), sz: .25 + r() * .55, ph: r() * TAU }));
+  })();
+
+  const NEUTRINO_RAYS = (() => {
+    const r = rng(55);
+    return Array.from({ length: 11 }, (_, i) => ({
+      v: (i / 10 - .5) * .72,
+      spd: 1.4 + r() * .8,
+      off: r()
+    }));
+  })();
+
+  function cosmosBg(F, g, a = 1) {
+    ctx.save(); ctx.globalAlpha *= a;
+    ctx.strokeStyle = rgba(C.line, .26); ctx.lineWidth = .35;
+    for (let x = F.left * 2; x <= F.right * 2; x += 14) line(x, F.top * 2, x, F.bottom * 2);
+    for (let y = F.top * 2; y <= F.bottom * 2; y += 14) line(F.left * 2, y, F.right * 2, y);
+    STARS_BG.forEach(s => {
+      const x = lerp(F.left * 1.5, F.right * 1.5, s.fx);
+      const y = lerp(F.top * 1.5, F.bottom * 1.5, s.fy);
+      const tw = .5 + .5 * Math.sin(g * 1.8 + s.ph);
+      dot(x, y, s.sz, C.ink, .25 + .45 * tw);
+    });
+    ctx.restore();
+  }
+
+  // Medallón con el retrato real recortado de Diego Restrepo Quintero
+  function restrepoMedal(x, y, r, a = 1, glow = 0) {
+    if (a <= 0 || r <= 0) return;
+    ctx.save(); ctx.globalAlpha *= a;
+    if (glow > 0) {
+      const grH = ctx.createRadialGradient(x, y, r * .7, x, y, r * 1.55);
+      grH.addColorStop(0, rgba(C.accent, .40 * glow));
+      grH.addColorStop(1, rgba(C.accent, 0));
+      ctx.fillStyle = grH;
+      ctx.beginPath(); ctx.arc(x, y, r * 1.55, 0, TAU); ctx.fill();
+    }
+    ctx.beginPath(); ctx.arc(x, y, r, 0, TAU);
+    const grBg = ctx.createRadialGradient(x, y - r * .2, r * .1, x, y, r);
+    grBg.addColorStop(0, '#223166');
+    grBg.addColorStop(1, '#0C1228');
+    ctx.fillStyle = grBg; ctx.fill();
+
+    ctx.save();
+    ctx.beginPath(); ctx.arc(x, y, r * .96, 0, TAU); ctx.clip();
+    if (imgRestrepo && imgRestrepo.complete && imgRestrepo.naturalWidth > 0) {
+      const iw = r * 2.15, ih = iw * imgRestrepo.naturalHeight / imgRestrepo.naturalWidth;
+      ctx.drawImage(imgRestrepo, x - iw / 2, y - r * .92, iw, ih);
+    } else {
+      person(x, y + r * .15, r * .75, C.accent, 1);
+    }
+    ctx.restore();
+
+    ring(x, y, r, 1, glow > .2 ? C.accent : C.accent2, 1.0);
+    ring(x, y, r * 1.09, .55, C.accent, .45);
+    ctx.restore();
+  }
+
+  function sealBadge(img, x, y, r, a = 1) {
+    if (a <= 0 || r <= 0) return;
+    ctx.save(); ctx.globalAlpha *= a;
+    ctx.fillStyle = '#F4EFE6';
+    ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); ctx.fill();
+    if (img && img.complete && img.naturalWidth > 0) {
+      ctx.drawImage(img, x - r * .92, y - r * .92, r * 1.84, r * 1.84);
+    }
+    ring(x, y, r, .95, C.accent, .7);
+    ctx.restore();
+  }
+
+  // ================= 9. Escenas =================
+  const SCENES = [
+    // ESCENA 1: Los 100 billones de neutrinos solares y la primera grieta en el Modelo Estándar
+    {
+      alt: 'Haces veloces de neutrinos nacidos en el Sol atraviesan de lado a lado una figura humana sin desviarse, y debajo un bloque sólido se fractura con una grieta luminosa ámbar.',
+      cam: F => {
+        const A = F.area, py = A.y0 + A.h * .25;
+        return [
+          [0, A.cx, py, 2.05],
+          [F.at('cuerpo'), A.cx, py, 1.9],
+          [F.at('grieta') - .1, 0, 0, 1],
+          [F.at('fisica') + .3, 0, 3, 1.03]
+        ];
+      },
+      draw(t, F) {
+        const A = F.area;
+        cosmosBg(F, F.g, 1);
+
+        // Parte superior: Figura humana atravesada por corrientes de neutrinos solares de borde a borde
+        const px = A.cx, py = A.y0 + A.h * .25, ps = A.s * .15;
+        ring(px, py, ps * 1.25, .65, C.accent2, .7);
+        person(px, py, ps, C.ink, 1);
+
+        NEUTRINO_RAYS.forEach(nr => {
+          const ry = py + nr.v * ps * 2.2;
+          ctx.save();
+          ctx.strokeStyle = rgba(C.accent, .38);
+          ctx.lineWidth = .55;
+          ctx.setLineDash([2.5, 2.5]);
+          line(F.left * 1.4, ry, F.right * 1.4, ry);
+          ctx.restore();
+
+          const prog = (F.g * nr.spd + nr.off) % 1;
+          const nx = lerp(F.left * 1.2, F.right * 1.2, prog);
+          dot(nx, ry, 1.5, C.accent, .95);
+        });
+
+        // Parte inferior: El bloque monolítico del Modelo Estándar que sufre una grieta luminosa ámbar
+        const kBlock = ease(seg(t, F.at('neutrinos') - .2, F.at('grieta') + .2));
+        const kCrack = easeIO(seg(t, F.at('grieta') - .15, F.at('fisica') + .4));
+        if (kBlock > 0) {
+          const bw = A.w * .74 * kBlock, bh = A.h * .28 * kBlock;
+          const bx = A.cx - bw / 2, by = A.y0 + A.h * .66 - bh / 2;
+
+          ctx.save();
+          ctx.fillStyle = C.panel;
+          ctx.strokeStyle = kCrack > .2 ? C.accent : C.accent2;
+          ctx.lineWidth = 1.0;
+          rrect(bx, by, bw, bh, 2.5); ctx.fill(); ctx.stroke();
+
+          // Grieta relampagueante en el centro del monolito
+          if (kCrack > 0) {
+            const crackPts = [
+              [A.cx - 2, by],
+              [A.cx + 3.5, by + bh * .28],
+              [A.cx - 4.2, by + bh * .54],
+              [A.cx + 2.8, by + bh * .78],
+              [A.cx - 1.5, by + bh]
+            ];
+            ctx.strokeStyle = C.accent;
+            ctx.lineWidth = 1.65;
+            ctx.beginPath();
+            const lim = Math.max(1, Math.floor((crackPts.length - 1) * kCrack));
+            for (let i = 0; i <= lim; i++) {
+              const pt = crackPts[i];
+              i === 0 ? ctx.moveTo(pt[0], pt[1]) : ctx.lineTo(pt[0], pt[1]);
+            }
+            ctx.stroke();
+
+            // Resplandor ámbar saliendo de la grieta
+            const gr = ctx.createRadialGradient(A.cx, by + bh / 2, 1, A.cx, by + bh / 2, bw * .45);
+            gr.addColorStop(0, rgba(C.accent, .38 * kCrack));
+            gr.addColorStop(1, rgba(C.accent, 0));
+            ctx.fillStyle = gr;
+            ctx.beginPath(); ctx.arc(A.cx, by + bh / 2, bw * .45, 0, TAU); ctx.fill();
+          }
+          ctx.restore();
+        }
+        scrim(.62);
+      }
+    },
+
+    // ESCENA 2: Retrato de Diego Restrepo, sello UdeA y portada de su tesis doctoral en Valencia (2001)
+    {
+      alt: 'El retrato de Diego Restrepo brilla en un medallón superior acompañado por el sello de la Universidad de Antioquia y la portada de su tesis doctoral de dos mil uno en la Universidad de Valencia.',
+      cam: F => [
+        [0, 0, -10, 1.22],
+        [F.at('valencia') + .2, 0, 0, 1.02],
+        [F.at('publica') + .4, 0, 3, .98]
+      ],
+      draw(t, F) {
+        const A = F.area;
+        cosmosBg(F, F.g, .9);
+
+        // HÉROE SUPERIOR: Medallón con el retrato recortado de Diego Restrepo y sello UdeA
+        const px = A.cx - A.w * .14, py = A.y0 + A.h * .21, pr = A.s * .155;
+        const kPor = pop(t, 0, .45);
+        const kGlow = ease(seg(t, F.at('diego') - .1, F.at('antioquia') + .3));
+        restrepoMedal(px, py, pr * kPor, 1, kGlow);
+
+        const sx = A.cx + A.w * .24, sy = py, sr = A.s * .108;
+        const kUdea = pop(t, F.at('antioquia') - .15, .4);
+        if (kUdea > 0) {
+          ctx.save(); ctx.strokeStyle = C.accent2; ctx.lineWidth = .6; ctx.setLineDash([2, 1.8]);
+          line(px + pr, py, sx - sr, sy);
+          ctx.restore();
+          sealBadge(imgSelloUdea, sx, sy, sr * kUdea, 1);
+        }
+
+        // HÉROE INFERIOR: Portada real de su Tesis Doctoral en la Universitat de València / IFIC (2001)
+        const kTes = pop(t, F.at('doctoro') - .15, .45);
+        if (kTes > 0) {
+          const tw = A.w * .74 * kTes, th = tw * .76;
+          const tx = A.cx - tw / 2, ty = A.y0 + A.h * .67 - th / 2;
+
+          ctx.save();
+          ctx.fillStyle = '#050814';
+          rrect(tx + 1.2, ty + 1.5, tw, th, 2.5); ctx.fill();
+          ctx.fillStyle = '#FFFFFF';
+          rrect(tx, ty, tw, th, 2.5); ctx.fill();
+
+          if (imgTesis && imgTesis.complete && imgTesis.naturalWidth > 0) {
+            const iw = imgTesis.naturalWidth, ih = imgTesis.naturalHeight;
+            ctx.save();
+            rrect(tx, ty, tw, th, 2.5); ctx.clip();
+            // Recorte exacto a la hoja blanca de la tesis doctoral
+            ctx.drawImage(imgTesis, iw * .32, ih * .07, iw * .36, ih * .86, tx, ty, tw, th);
+            ctx.restore();
+          }
+
+          const kBack = ease(seg(t, F.at('regreso') - .1, F.at('publica') + .3));
+          ctx.strokeStyle = kBack > .2 ? C.accent : C.accent2;
+          ctx.lineWidth = kBack > .2 ? 1.25 : .85;
+          rrect(tx, ty, tw, th, 2.5); ctx.stroke();
+          ctx.restore();
+
+          if (kBack > .25) {
+            check(tx + tw - 2, ty + 2, A.s * .048 * pop(t, F.at('regreso')), kBack);
+          }
+        }
+        scrim(.62);
+      }
+    },
+
+    // ESCENA 3: La oscilación de los neutrinos (cambio de sabor) y la balanza de masa
+    {
+      alt: 'Un neutrino viaja cambiando cíclicamente entre tres anillos de identidad mientras debajo una balanza de precisión se inclina demostrando que tiene una masa diminuta.',
+      cam: F => [
+        [0, 0, -6, 1.16],
+        [F.at('camaleon') + .2, 0, 0, 1],
+        [F.at('pesan') + .3, 0, 4, 1.04]
+      ],
+      draw(t, F) {
+        const A = F.area;
+        cosmosBg(F, F.g, .85);
+
+        // Parte superior: Ondas acopladas de oscilación de neutrinos y los 3 estados de sabor
+        const topY = A.y0 + A.h * .27;
+        const kOsc = easeIO(seg(t, F.at('viajar') - .2, F.at('oscilacion') + .4));
+
+        // Tres ondas sinusoidales desfasadas de borde a borde
+        const cols = [C.accent, C.accent2, C.ok];
+        for (let c = 0; c < 3; c++) {
+          ctx.save();
+          ctx.strokeStyle = cols[c];
+          ctx.lineWidth = .8;
+          ctx.globalAlpha = .72;
+          ctx.beginPath();
+          for (let i = 0; i <= 48; i++) {
+            const u = i / 48;
+            const wx = lerp(F.left * 1.2, F.right * 1.2, u);
+            const wy = topY + Math.sin(u * TAU * 2 - F.g * 3 + (c * TAU) / 3) * (A.s * .09 * (.3 + .7 * kOsc));
+            i === 0 ? ctx.moveTo(wx, wy) : ctx.lineTo(wx, wy);
+          }
+          ctx.stroke();
+          ctx.restore();
+        }
+
+        // Tres nodos de identidad (sabores del neutrino) que se encienden en secuencia como un camaleón
+        const activeFlavor = Math.floor((F.g * 1.8) % 3);
+        for (let c = 0; c < 3; c++) {
+          const nx = A.cx + (c - 1) * A.w * .28;
+          const isOn = c === activeFlavor;
+          ring(nx, topY, A.s * (.085 + (isOn ? .02 : 0)), isOn ? 1 : .55, cols[c], isOn ? 1.2 : .65);
+          dot(nx, topY, A.s * (.042 + (isOn ? .012 : 0)), cols[c], isOn ? 1 : .6);
+        }
+
+        // Parte inferior: Balanza de precisión que se inclina cuando dice "solo es posible si realmente pesan algo"
+        const balX = A.cx, balY = A.y0 + A.h * .68, beamW = A.w * .54;
+        const kTilt = easeIO(seg(t, F.at('posible') - .1, F.at('algo') + .4));
+        const tiltAng = .18 * kTilt;
+
+        ctx.save();
+        // Pedestal central de la balanza
+        ctx.strokeStyle = C.ink; ctx.lineWidth = 1.0;
+        line(balX, balY - A.s * .08, balX, balY + A.s * .10);
+        line(balX - A.s * .10, balY + A.s * .10, balX + A.s * .10, balY + A.s * .10);
+
+        // Brazo inclinado de la balanza
+        ctx.translate(balX, balY - A.s * .08);
+        ctx.rotate(tiltAng);
+        ctx.strokeStyle = C.accent2; ctx.lineWidth = 1.1;
+        line(-beamW / 2, 0, beamW / 2, 0);
+
+        // Platillo izquierdo (vacío / cero clásico tachado) y platillo derecho (neutrino con masa real)
+        for (const side of [-1, 1]) {
+          const px = side * (beamW / 2);
+          ctx.save();
+          ctx.translate(px, 0);
+          ctx.rotate(-tiltAng);
+          ctx.strokeStyle = C.muted; ctx.lineWidth = .6;
+          line(0, 0, -4.5, 9); line(0, 0, 4.5, 9);
+          ctx.strokeStyle = side > 0 ? C.accent : C.accent2; ctx.lineWidth = .95;
+          line(-6.5, 9, 6.5, 9);
+          if (side > 0) {
+            dot(0, 5.5, 2.8, C.accent, 1);
+            if (kTilt > .3) ring(0, 5.5, 5.2, kTilt, C.accent, .75);
+          } else if (kTilt > .3) {
+            cross(0, 4.5, 2.5, kTilt, C.warn);
+          }
+          ctx.restore();
+        }
+        ctx.restore();
+
+        scrim(.62);
+      }
+    },
+
+    // ESCENA 4: Dos candados (masa del neutrino + materia oscura) y una sola llave
+    {
+      alt: 'Dos grandes candados que representan el misterio de la masa del neutrino y el de la materia oscura se abren al mismo tiempo gracias a una llave dorada central.',
+      cam: F => [
+        [0, 0, -4, 1.14],
+        [F.at('oscura') + .2, 0, 0, 1],
+        [F.at('candados') + .3, 0, 2, 1.05]
+      ],
+      draw(t, F) {
+        const A = F.area;
+        cosmosBg(F, F.g, .85);
+
+        const leftX = A.cx - A.w * .26, rightX = A.cx + A.w * .26, lockY = A.y0 + A.h * .32;
+        const kL1 = pop(t, F.at('neutrinos') - .2, .4);
+        const kL2 = pop(t, F.at('oscura') - .2, .4);
+        const kKey = easeIO(seg(t, F.at('llave') - .15, F.at('candados') + .4));
+
+        // Candado izquierdo: La masa diminuta del neutrino
+        if (kL1 > 0) {
+          ring(leftX, lockY, A.s * .17 * kL1, .55, C.accent2, .65);
+          lock(leftX, lockY, A.s * .105 * kL1, kKey, C.accent2, 1);
+        }
+
+        // Candado derecho: La materia oscura del cosmos
+        if (kL2 > 0) {
+          ctx.save(); ctx.setLineDash([2.5, 2.2]);
+          ring(rightX, lockY, A.s * .17 * kL2, .65, C.accent, .7);
+          ctx.restore();
+          lock(rightX, lockY, A.s * .105 * kL2, kKey, C.accent, 1);
+        }
+
+        // HÉROE INFERIOR: Una sola llave dorada en el centro que envía pulsos de apertura a ambos candados
+        if (kKey > 0) {
+          const kx = A.cx, ky = A.y0 + A.h * .66, ks = A.s * .14 * pop(t, F.at('llave') - .1);
+          ctx.save();
+          ctx.strokeStyle = C.accent; ctx.fillStyle = C.panel; ctx.lineWidth = 1.25;
+          // Cabeza circular de la llave
+          ctx.beginPath(); ctx.arc(kx - ks * .65, ky, ks * .45, 0, TAU); ctx.fill(); ctx.stroke();
+          dot(kx - ks * .65, ky, ks * .16, C.accent, 1);
+          // Tallo y dientes de la llave
+          line(kx - ks * .20, ky, kx + ks * .95, ky);
+          line(kx + ks * .55, ky, kx + ks * .55, ky + ks * .32);
+          line(kx + ks * .85, ky, kx + ks * .85, ky + ks * .42);
+          ctx.restore();
+
+          // Haces conectores hacia los dos candados y checks verdes al abrirlos
+          arrow(kx - ks * .2, ky - ks * .45, leftX, lockY + A.s * .14, kKey, C.accent, .95);
+          arrow(kx + ks * .2, ky - ks * .45, rightX, lockY + A.s * .14, kKey, C.accent, .95);
+
+          if (kKey > .65) {
+            check(leftX + A.s * .11, lockY - A.s * .11, A.s * .045 * pop(t, F.at('abrir')), 1);
+            check(rightX + A.s * .11, lockY - A.s * .11, A.s * .045 * pop(t, F.at('candados')), 1);
+          }
+        }
+        scrim(.62);
+      }
+    },
+
+    // ESCENA 5: El diagrama de Feynman del mecanismo escotogénico (el rodeo cuántico por la oscuridad)
+    {
+      alt: 'El camino directo de un neutrino aparece bloqueado, pero sobre él se abre un bucle cuántico semicircular por donde circulan partículas de materia oscura que le otorgan su masa al salir.',
+      cam: F => [
+        [0, 0, 0, 1.16],
+        [F.at('rodeo') + .2, 0, -2, 1.02],
+        [F.at('oscura') + .3, 0, 0, 1.06]
+      ],
+      draw(t, F) {
+        const A = F.area;
+        cosmosBg(F, F.g, .8);
+
+        const cy = A.y0 + A.h * .56, loopR = A.w * .27;
+        const leftX = A.cx - A.w * .42, rightX = A.cx + A.w * .42;
+        const vL = A.cx - loopR, vR = A.cx + loopR;
+
+        const kBlock = ease(seg(t, F.at('directa') - .3, F.at('directa') + .3));
+        const kLoop = easeIO(seg(t, F.at('rodeo') - .2, F.at('oscura') + .4));
+
+        // Línea de entrada del neutrino (izquierda) y salida con masa (derecha)
+        arrow(leftX, cy, vL - 1.5, cy, 1, C.accent2, 1.0);
+        dot(lerp(leftX, vL - 2, (F.g * 1.4) % 1), cy, 1.8, C.accent2, 1);
+
+        // El paso directo entre vL y vR está prohibido a nivel árbol (bloqueado con X roja)
+        ctx.save();
+        ctx.strokeStyle = rgba(C.muted, .45); ctx.lineWidth = .7; ctx.setLineDash([2.5, 2.5]);
+        line(vL, cy, vR, cy);
+        ctx.restore();
+        if (kBlock > 0) {
+          cross(A.cx, cy, A.s * .042, kBlock, C.warn);
+        }
+
+        // EL RODEO CUÁNTICO (Lazo escotogénico de materia oscura)
+        if (kLoop > 0) {
+          // Resplandor del sector oscuro dentro del bucle
+          const gr = ctx.createRadialGradient(A.cx, cy - loopR * .45, 2, A.cx, cy - loopR * .45, loopR * 1.25);
+          gr.addColorStop(0, rgba(C.accent, .36 * kLoop));
+          gr.addColorStop(1, rgba(C.accent, 0));
+          ctx.fillStyle = gr;
+          ctx.beginPath(); ctx.arc(A.cx, cy - loopR * .45, loopR * 1.25, 0, TAU); ctx.fill();
+
+          // Arco superior punteado (escalares oscuros eta / H)
+          ctx.save();
+          ctx.strokeStyle = C.accent; ctx.lineWidth = 1.25; ctx.setLineDash([4, 3]);
+          ctx.beginPath();
+          ctx.arc(A.cx, cy, loopR, Math.PI, Math.PI + Math.PI * kLoop);
+          ctx.stroke();
+          ctx.restore();
+
+          // Fermión oscuro pesado (N_k) en la base del lazo y acoplamientos escalares arriba
+          ctx.save();
+          ctx.strokeStyle = C.accent; ctx.lineWidth = 1.2;
+          line(vL, cy, lerp(vL, vR, kLoop), cy);
+          ctx.restore();
+
+          // Vértices de interacción y partículas oscuras circulando por el bucle
+          dot(vL, cy, 2.6, C.accent, 1);
+          dot(vR, cy, 2.6 * kLoop, C.accent, 1);
+          const angP = Math.PI + ((F.g * 1.6) % 1) * Math.PI * kLoop;
+          dot(A.cx + Math.cos(angP) * loopR, cy + Math.sin(angP) * loopR, 2.5, C.accent, 1);
+
+          // Líneas externas de acoplamiento del bosón de Higgs en la cima del lazo
+          const topLx = A.cx - loopR * .45, topRx = A.cx + loopR * .45, topLy = cy - loopR * .89;
+          ctx.save(); ctx.strokeStyle = C.accent2; ctx.lineWidth = .85; ctx.setLineDash([2, 2]);
+          line(topLx - 5, topLy - 10 * kLoop, topLx, topLy);
+          line(topRx + 5, topLy - 10 * kLoop, topRx, topLy);
+          ctx.restore();
+          cross(topLx - 5, topLy - 10 * kLoop, 1.8, kLoop, C.accent2);
+          cross(topRx + 5, topLy - 10 * kLoop, 1.8, kLoop, C.accent2);
+
+          // Neutrino saliente a la derecha ahora con masa (halo ámbar + check)
+          if (kLoop > .6) {
+            arrow(vR + 1.5, cy, rightX, cy, 1, C.accent, 1.25);
+            const outX = lerp(vR + 3, rightX - 2, (F.g * 1.2) % 1);
+            dot(outX, cy, 2.6, C.accent, 1);
+            ring(outX, cy, 4.8, .85, C.accent, .7);
+          }
+        }
+        scrim(.62);
+      }
+    },
+
+    // ESCENA 6: Los 35 modelos escotogénicos viables y el paper JHEP 2013 (+148 citas)
+    {
+      alt: 'Una matriz de nodos cuánticos se ilumina arriba con una insignia verde y debajo aparece el artículo científico de Diego Restrepo, Óscar Zapata y Carlos Yaguna con más de ciento cuarenta citas.',
+      cam: F => [
+        [0, 0, -6, 1.15],
+        [F.at('modelos') + .2, 0, 0, 1],
+        [F.at('citas') + .3, 0, 4, 1.05]
+      ],
+      draw(t, F) {
+        const A = F.area;
+        cosmosBg(F, F.g, .85);
+
+        // Parte superior: Red de topologías viables clasificadas por Restrepo, Zapata y Yaguna
+        const topY = A.y0 + A.h * .21;
+        const kGrid = easeIO(seg(t, F.at('clasifico') - .2, F.at('modelos') + .3));
+        const cols = 7, rows = 3, gx0 = A.cx - A.w * .34, gw = A.w * .68, gh = A.h * .14;
+
+        for (let r = 0; r < rows; r++) {
+          for (let c = 0; c < cols; c++) {
+            const idx = r * cols + c;
+            const p = clamp(kGrid * 1.4 - idx * .025);
+            if (p <= 0) continue;
+            const nx = gx0 + (c / (cols - 1)) * gw;
+            const ny = topY - gh / 2 + (r / (rows - 1)) * gh;
+            const isGold = (idx % 3 === 0);
+            dot(nx, ny, (isGold ? 2.1 : 1.5) * p, isGold ? C.accent : C.accent2, .9);
+            if (isGold) ring(nx, ny, 3.8 * p, .65, C.accent, .55);
+          }
+        }
+
+        // HÉROE INFERIOR: El paper real JHEP 11 (2013) 011 con el sello +148 CITAS CIENTÍFICAS
+        const kPap = pop(t, F.at('trece') - .1, .48);
+        const kCit = ease(seg(t, F.at('supera') - .1, F.at('citas') + .4));
+        if (kPap > 0) {
+          const pw = A.w * .88 * kPap, ph = pw * .66;
+          const px = A.cx - pw / 2, py = A.y0 + A.h * .63 - ph / 2;
+
+          ctx.save();
+          ctx.fillStyle = '#050814';
+          rrect(px + 1.2, py + 1.6, pw, ph, 2.5); ctx.fill();
+          ctx.fillStyle = '#FFFFFF';
+          rrect(px, py, pw, ph, 2.5); ctx.fill();
+
+          if (imgPaper && imgPaper.complete && imgPaper.naturalWidth > 0) {
+            const iw = imgPaper.naturalWidth, ih = imgPaper.naturalHeight;
+            ctx.save();
+            rrect(px, py, pw, ph, 2.5); ctx.clip();
+            ctx.drawImage(imgPaper, iw * .185, ih * .115, iw * .63, ih * .77, px, py, pw, ph);
+            ctx.restore();
+          }
+          ctx.strokeStyle = kCit > .2 ? C.accent : C.accent2;
+          ctx.lineWidth = kCit > .2 ? 1.25 : .8;
+          rrect(px, py, pw, ph, 2.5); ctx.stroke();
+          ctx.restore();
+
+          if (kCit > 0) {
+            ctx.save();
+            ctx.strokeStyle = rgba(C.accent, .45 * kCit);
+            ctx.lineWidth = 2.5;
+            rrect(px - 1.5, py - 1.5, pw + 3, ph + 3, 3.5); ctx.stroke();
+            ctx.restore();
+            check(px + pw - 2, py + 1, A.s * .048 * pop(t, F.at('supera')), kCit);
+          }
+        }
+        scrim(.62);
+      }
+    },
+
+    // ESCENA 7: Cierre — Retrato de Diego Restrepo, placa Categoría A1 MinCiencias y el mural de los 4 científicos
+    {
+      alt: 'El retrato de Diego Restrepo y el reconocimiento Categoría A1 de MinCiencias presiden el mural de los cuatro científicos colombianos unidos frente al noventa y cinco por ciento invisible del universo.',
+      cam: F => [
+        [0, 0, -6, 1.16],
+        [F.at('medellin') + .2, 0, 0, 1],
+        [F.at('historia') + .4, 0, 3, 1.03]
+      ],
+      draw(t, F) {
+        const A = F.area;
+        cosmosBg(F, F.g, 1);
+
+        // Parte superior: Medallón con el retrato de Diego Restrepo a la izquierda y placa Categoría A1 MinCiencias a la derecha
+        const px = A.cx - A.w * .20, py = A.y0 + A.h * .22, pr = A.s * .145;
+        const kPor = pop(t, 0, .45);
+        const kEnd = easeIO(seg(t, F.at('esquiva') - .2, F.at('historia') + .4));
+        restrepoMedal(px, py, pr * kPor, 1, .6 + .4 * kEnd);
+
+        const kA1 = pop(t, F.at('categoria') - .2, .42);
+        if (kA1 > 0) {
+          const aw = A.w * .40 * kA1, ah = aw * .64;
+          const ax = A.cx + A.w * .22 - aw / 2, ay = py - ah / 2;
+          ctx.save();
+          ctx.fillStyle = '#F4EFE6';
+          rrect(ax, ay, aw, ah, 2); ctx.fill();
+          if (imgSelloA1 && imgSelloA1.complete && imgSelloA1.naturalWidth > 0) {
+            ctx.drawImage(imgSelloA1, ax + 1, ay + 1, aw - 2, ah - 2);
+          }
+          ctx.strokeStyle = C.accent; ctx.lineWidth = .9;
+          rrect(ax, ay, aw, ah, 2); ctx.stroke();
+          ctx.restore();
+        }
+
+        // HÉROE INFERIOR: El mural de cierre de los 4 científicos ("Cuatro frentes, una misión — El 95% invisible")
+        const kMur = pop(t, F.at('demuestra') - .2, .48);
+        if (kMur > 0) {
+          const mw = A.w * .90 * kMur, mh = mw * (9 / 16);
+          const mx = A.cx - mw / 2, my = A.y0 + A.h * .66 - mh / 2;
+
+          ctx.save();
+          ctx.fillStyle = '#050814';
+          rrect(mx + 1.2, my + 1.5, mw, mh, 2.5); ctx.fill();
+          ctx.fillStyle = '#F4EFE6';
+          rrect(mx, my, mw, mh, 2.5); ctx.fill();
+          if (imgMural && imgMural.complete && imgMural.naturalWidth > 0) {
+            ctx.save();
+            rrect(mx, my, mw, mh, 2.5); ctx.clip();
+            ctx.drawImage(imgMural, mx, my, mw, mh);
+            ctx.restore();
+          }
+          ctx.strokeStyle = C.accent; ctx.lineWidth = 1.25;
+          rrect(mx, my, mw, mh, 2.5); ctx.stroke();
+          ctx.restore();
+
+          if (kEnd > .35) {
+            check(mx + mw - 2, my + 2, A.s * .048 * pop(t, F.at('universo')), kEnd);
+          }
+        }
+        scrim(.62);
+      }
+    }
+  ];
+
+  // ================= 10. Motor: tiempos =================
+  const norm = s => String(s).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]/g, '');
+  const N = SCENES.length;
+  function estimate(text) {
+    const words = [];
+    let t = .25;
+    for (const raw of text.split(/\s+/).filter(Boolean)) {
+      const m = raw.match(/^(.*?)([.,:;!?…]*)$/);
+      const core = m[1].replace(/^[¿¡"«(]+|[")»]+$/g, '');
+      const spoken = SAY[core] || core;
+      const letters = spoken.replace(/[^a-záéíóúñü0-9]/gi, '').length;
+      const d = clamp(.1 + letters * .038, .16, 1) * CONFIG.ritmo;
+      words.push({ w: raw, s: t, e: t + d });
+      t += d + (/[.!?…]/.test(m[2]) ? .38 : /[:;]/.test(m[2]) ? .24 : /,/.test(m[2]) ? .17 : .02) * CONFIG.ritmo;
+    }
+    return { words, dur: t + CONFIG.cola };
+  }
+  function chunks(words) {
+    const out = [];
+    let cur = [];
+    words.forEach((w, i) => {
+      cur.push(i);
+      const len = cur.map(j => words[j].w).join(' ').length;
+      if (cur.length >= FMT.maxPal || len >= FMT.maxCar || /[.,:;!?…]$/.test(w.w)) { out.push(cur); cur = []; }
+    });
+    if (cur.length) out.push(cur);
+    return out.map(ids => ({ ids, s: words[ids[0]].s }));
+  }
+  function makeAt(s) {
+    const cache = new Map();
+    return (q, n = 1) => {
+      const key = q + '#' + n;
+      if (cache.has(key)) return cache.get(key);
+      const parts = String(q).split(/\s+/).map(norm).filter(Boolean);
+      let hits = 0, res = null;
+      for (let i = 0; i + parts.length <= s.words.length && res === null; i++) {
+        if (parts.every((p, k) => norm(s.words[i + k].w).startsWith(p)) && ++hits === n) res = s.words[i].s;
+      }
+      if (res === null) { console.warn(`at("${q}") no aparece en la escena ${s.i + 1}: "${s.text.slice(0, 50)}…"`); res = 0; }
+      cache.set(key, res);
+      return res;
+    };
+  }
+  const count = s => s.split(/\s+/).filter(Boolean).length;
+  const useWords = WORDS.length > 0 && WORDS.length === SCRIPT.reduce((a, s) => a + count(s), 0);
+  if (WORDS.length && !useWords) console.warn('WORDS no tiene la misma cantidad de palabras que SCRIPT. Uso tiempos estimados.');
+  if (useWords) {
+    let wi = 0;
+    const ranges = SCRIPT.map(s => { const r = [wi, wi + count(s)]; wi = r[1]; return r; });
+    const starts = ranges.map(([a], i) => i ? Math.max(0, WORDS[a][1] - .08) : 0);
+    SCENES.forEach((s, i) => {
+      const [a, b] = ranges[i];
+      s.start = starts[i];
+      s.dur = (i < N - 1 ? starts[i + 1] : WORDS[b - 1][2] + CONFIG.cola) - s.start;
+      s.words = WORDS.slice(a, b).map(([w, ws, we]) => ({ w, s: ws - s.start, e: we - s.start }));
+    });
+  } else {
+    let acc = 0;
+    SCENES.forEach((s, i) => { const e = estimate(SCRIPT[i]); s.words = e.words; s.dur = e.dur; s.start = acc; acc += s.dur; });
+  }
+  SCENES.forEach((s, i) => { s.i = i; s.text = SCRIPT[i]; s.chunks = chunks(s.words); s.at = makeAt(s); });
+  const TOTAL = SCENES[N - 1].start + SCENES[N - 1].dur;
+  document.getElementById('total').textContent = Math.round(TOTAL);
+
+  // ================= 11. Motor: interfaz =================
+  const barsEl = document.getElementById('bars');
+  barsEl.innerHTML = SCENES.map(() => '<span><i></i></span>').join('');
+  const fills = [...barsEl.querySelectorAll('i')];
+  const scriptEl = document.getElementById('script');
+  scriptEl.innerHTML = SCENES.map((s, i) => `<li><button class="blk" type="button" data-i="${i}"><span class="n">${String(i + 1).padStart(2, '0')}</span><span>${s.text}</span></button></li>`).join('');
+  const blks = [...scriptEl.querySelectorAll('.blk')];
+  blks.forEach(b => b.addEventListener('click', () => { nav(+b.dataset.i); closeSheet(); }));
+  if (CONFIG.subtitulos === 'karaoke') subsEl.classList.add('karaoke');
+
+  const audio = document.getElementById('voz');
+  const hasAudio = !!AUDIO_SRC && !!audio && typeof audio.play === 'function';
+  if (hasAudio) audio.src = AUDIO_SRC;
+
+  let T = 0, idx = -1, playing = !reduce && !hasAudio && !RENDER, ended = false, clean = false, bare = false, last = performance.now();
+  let chunkIdx = -1, wordEls = [];
+  const sceneAt = t => { let i = N - 1; while (i > 0 && SCENES[i].start > t) i--; return i; };
+
+  function enter(i) {
+    idx = i; chunkIdx = -1;
+    subsEl.classList.remove('full');
+    cv.setAttribute('aria-label', SCENES[i].alt);
+    blks.forEach((b, j) => j === i ? b.setAttribute('aria-current', 'step') : b.removeAttribute('aria-current'));
+  }
+  function renderSubs(s, lt) {
+    const hide = CONFIG.subtitulos === 'no' || s.noSubs;
+    subsEl.style.visibility = hide ? 'hidden' : '';
+    if (hide) return;
+    if (reduce) {
+      if (chunkIdx !== 0) { subsEl.textContent = s.text; subsEl.classList.add('full'); chunkIdx = 0; }
+      return;
+    }
+    let ci = 0;
+    for (let i = 0; i < s.chunks.length; i++) if (s.chunks[i].s <= lt + .03) ci = i;
+    if (ci !== chunkIdx) {
+      chunkIdx = ci;
+      subsEl.innerHTML = s.chunks[ci].ids.map(j => `<span class="w">${s.words[j].w}</span>`).join(' ');
+      wordEls = [...subsEl.children];
+      subsEl.classList.remove('pop'); void subsEl.offsetWidth; subsEl.classList.add('pop');
+    }
+    let cur = -1;
+    s.chunks[ci].ids.forEach((j, k) => { if (s.words[j].s <= lt + .03) cur = k; });
+    wordEls.forEach((el, k) => el.classList.toggle('now', k === cur));
+  }
+  function paint() {
+    const i = sceneAt(T), s = SCENES[i];
+    if (i !== idx) enter(i);
+    const lt = reduce ? s.dur - .01 : T - s.start;
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    ctx.clearRect(0, 0, W, H);
+    bleed(C.bg);
+    const F = Object.assign(frameInfo(), { g: reduce ? s.start : T, dur: s.dur, at: s.at, words: s.words });
+    const keys = typeof s.cam === 'function' ? s.cam(F) : s.cam;
+    beginWorld(keys ? track(lt, keys) : { x: 0, y: 0, z: 1 });
+    s.draw(lt, F);
+    ctx.restore();
+    ctx.globalAlpha = 1;
+    renderSubs(s, lt);
+    fills.forEach((el, j) => el.style.setProperty('--p', j < i ? 1 : j > i ? 0 : clamp((T - s.start) / s.dur)));
+  }
+  function syncUI() {
+    document.getElementById('pz').hidden = playing || ended;
+    document.getElementById('replay').hidden = !ended;
+  }
+  function seek(t) {
+    T = clamp(t, 0, TOTAL - 1e-3); ended = false;
+    if (hasAudio) { try { audio.currentTime = T; } catch (e) { /* audio sin cargar */ } }
+  }
+  function play() {
+    playing = true; ended = false;
+    if (hasAudio) { try { audio.currentTime = T; } catch (e) { /* audio sin cargar */ } audio.play().catch(() => {}); }
+    syncUI();
+  }
+  function pause() { playing = false; if (hasAudio) audio.pause(); syncUI(); }
+  function nav(i) { seek(SCENES[clamp(i, 0, N - 1)].start + 1e-3); play(); }
+  function toggle() { if (ended) { seek(0); play(); } else if (playing) pause(); else play(); }
+  function finish() { T = TOTAL - 1e-3; pause(); ended = true; syncUI(); }
+  function setClean(v) { clean = v; frameEl.classList.toggle('clean', v); }
+  const bareSw = document.getElementById('bareSw');
+  function setBare(v) { bare = v; frameEl.classList.toggle('bare', v); bareSw.setAttribute('aria-checked', String(!v)); }
+  bareSw.addEventListener('click', () => setBare(!bare));
+
+  const taps = document.getElementById('taps');
+  let lpTimer = null, lpFired = false;
+  taps.addEventListener('pointerdown', () => {
+    lpFired = false;
+    clearTimeout(lpTimer);
+    lpTimer = setTimeout(() => { lpFired = true; if (clean) setClean(false); }, 700);
+  });
+  taps.addEventListener('pointerup', e => {
+    clearTimeout(lpTimer);
+    if (lpFired) return;
+    const r = taps.getBoundingClientRect(), x = (e.clientX - r.left) / r.width;
+    if (x < .3) nav(idx - 1);
+    else if (x > .7) { if (idx === N - 1) finish(); else nav(idx + 1); }
+    else toggle();
+  });
+  taps.addEventListener('pointercancel', () => clearTimeout(lpTimer));
+  taps.addEventListener('contextmenu', e => e.preventDefault());
+  document.getElementById('replay').addEventListener('click', () => { seek(0); play(); });
+
+  const aside = document.getElementById('aside');
+  let wasPlaying = false;
+  function openSheet() { wasPlaying = playing; pause(); aside.classList.add('open'); document.getElementById('close').focus(); }
+  function closeSheet() {
+    if (!aside.classList.contains('open')) return;
+    aside.classList.remove('open');
+    if (wasPlaying && !ended) play();
+  }
+  document.getElementById('info').addEventListener('click', openSheet);
+  document.getElementById('close').addEventListener('click', closeSheet);
+  document.getElementById('restart').addEventListener('click', () => { closeSheet(); nav(0); });
+  document.getElementById('rec').addEventListener('click', () => { closeSheet(); setClean(true); nav(0); frameEl.focus(); });
+
+  document.addEventListener('keydown', e => {
+    if (e.target.closest && e.target.closest('input,textarea,select')) return;
+    if (e.key === 'ArrowRight') { e.preventDefault(); nav(idx + 1); }
+    else if (e.key === 'ArrowLeft') { e.preventDefault(); nav(idx - 1); }
+    else if (e.key === ' ' && !(e.target instanceof HTMLButtonElement)) { e.preventDefault(); toggle(); }
+    else if (e.key === 'h' || e.key === 'H') setClean(!clean);
+    else if (e.key === 's' || e.key === 'S') setBare(!bare);
+    else if (e.key === 'r' || e.key === 'R') nav(0);
+    else if (e.key === 'Escape') closeSheet();
+  });
+
+  function frame(now) {
+    const dt = Math.min(.05, (now - last) / 1000);
+    last = now;
+    if (playing) {
+      if (hasAudio && !audio.paused) T = audio.currentTime; else T += dt;
+      if (T >= TOTAL) finish();
+    }
+    paint();
+    requestAnimationFrame(frame);
+  }
+
+  // ================= 12. Contrato de render =================
+  window.__duration = TOTAL;
+  window.__aspect = FMT.ar;
+  window.__escenas = SCENES.map(s => ({ inicio: +s.start.toFixed(3), dur: +s.dur.toFixed(3), texto: s.text }));
+  window.renderAt = t => { playing = false; T = clamp(t, 0, TOTAL - 1e-3); paint(); };
+
+  new ResizeObserver(resize).observe(frameEl);
+  resize();
+  enter(0);
+  syncUI();
+  ready = true;
+  if (RENDER) {
+    setClean(true);
+    frameEl.classList.add('frozen');
+    if (Q.has('bare')) setBare(true);
+    window.renderAt(parseFloat(Q.get('t')) || 0);
+    if (document.fonts) document.fonts.ready.then(() => window.renderAt(parseFloat(Q.get('t')) || 0));
+  } else {
+    paint();
+    requestAnimationFrame(frame);
+  }
+})();
+</script>
+</body>
+</html>

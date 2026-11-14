@@ -1,0 +1,10 @@
+# Dependencias Node
+**/node_modules/
+
+# Carpetas temporales de renderizado
+out/cuadros/
+out/seq/
+
+# Archivos WAV maestros sin comprimir duplicados (se conservan los MP3, M4A y SFX WAV ligeros)
+recursos-externos/02_assets/musica/*.wav
+Narracion/**/*.wav
